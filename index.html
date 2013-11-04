@@ -19,5 +19,11 @@
 	<script src="js/jquery.js"></script>
 	<script src="js/underscore.js"></script>
 	<script src="js/odin.js"></script>
+	<script>
+		var test = new Odin();
+		test.on("change", function() { console.log("change"); });
+		test.on("change:id", function() { console.log("namespaced"); });
+		test.on(":id", function() { console.log("namespace only"); });
+	</script>
 </body>
 </html>
