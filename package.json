@@ -1,0 +1,16 @@
+{
+  "name": "Odin",
+  "version": "0.0.0",
+  "description": "Yet another JavaScript MVC framework. But this one works well with Node.Js!",
+  "main": "index.js",
+  "repository": "",
+  "author": "Martin Førre",
+  "license": "BSD",
+  "devDependencies": {
+    "gulp": "3.5.0",
+    "gulp-browserify": "0.3.3",
+    "gulp-util": "2.2.12",
+    "gulp-jasmine": "0.1.2",
+    "gulp-uglify": "0.2.0"
+  }
+}
