@@ -9,7 +9,7 @@ module.exports = Odin = {
 if(typeof define === "function" && define.amd) {
     define("Odin", function() {
         return module.exports;
-    })
+    });
 } else {
     try {
         window.Odin = module.exports;
