@@ -2,24 +2,21 @@ var gulp = require("gulp"),
     gutil = require("gulp-util"),
     browserify = require("gulp-browserify"),
     uglify = require("gulp-uglify"),
-    jasmine = require("gulp-jasmine");
+    jasmine = require("gulp-jasmine"),
 
-gulp.task("scripts", function() {
-    return gulp.src(["src/*.js"])
-               .pipe(browserify())
-               .pipe(uglify())
-               .pipe(gulp.dest("dist"));
+    testFiles = "test/*.js",
+    sourceFiles = "src/*.js";
+
+gulp.task("scripts", ["test"], function() {
+    return gulp.src(["src/index.js"])
+        .pipe(browserify())
+        .pipe(uglify())
+        .pipe(gulp.dest("dist"));
 });
 
 gulp.task("test", function() {
-    return gulp.src(["test/*.js"])
-               .pipe(browserify())
-               .pipe(jasmine());
+    return gulp.src([testFiles])
+        .pipe(jasmine());
 });
 
-gulp.task("watch", function() {
-    gulp.watch("src/*.js", ["scripts", "test"]);
-    gulp.watch("test/*.js", ["test"]);
-});
-
-gulp.task("default", ["scripts", "test"]);
+gulp.task("default", ["scripts"]);

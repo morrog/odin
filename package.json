@@ -6,6 +6,10 @@
   "repository": "",
   "author": "Martin Førre",
   "license": "BSD",
+  "dependencies": {
+    "mout": "*",
+    "zepto": "*"
+  },
   "devDependencies": {
     "gulp": "3.5.0",
     "gulp-browserify": "0.3.3",
