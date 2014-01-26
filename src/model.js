@@ -1,12 +1,14 @@
 var Base = require("./base.js"),
     lang = require("mout/lang"),
     object = require("mout/object"),
+    array = require("mout/array"),
 
 Model = Base.extend({
 
     id: null,
     primary: "id",
     properties: {},
+    mutators: {},
     changed: {},
     previousProperties: {},
 
@@ -27,6 +29,8 @@ Model = Base.extend({
             (props = {})[key] = value;
         }
 
+        options = options || {};
+
         this.changed = {};
         this.previousProperties = lang.clone(this.properties);
 
@@ -40,22 +44,92 @@ Model = Base.extend({
             }
 
             this.changed[key] = this.properties[key];
-            this.properties[key] = props[key];
+            this.properties[key] = this.mutate(key, props[key]);
 
             if(key === this.primary) {
-                this.id = props[key];
+                this.id = this.properties[key];
             }
         }
 
-        for(key in this.changed) {
-            this.trigger("change:" + key, props[key], this.changed[key]);
+        if(!options.silent) {
+            for(key in this.changed) {
+                this.trigger("change:" + key, props[key], this.changed[key]);
+            }
+
+            this.trigger("change");
         }
 
-        return this.trigger("change");
+        return this;
+    },
+
+    unset: function(keys, options) {
+        var value, i, len;
+
+        keys = lang.isArray(keys) ? keys : keys.split(" ");
+        options = options || {};
+
+        for(i = 0, len = keys.length; i < len; i++) {
+            value = this.get(keys[i]);
+            delete this.properties[keys[i]];
+            delete this[keys[i]];
+            
+            if(!options.silent) {
+                this.trigger("unset:" + keys[i], value);
+            }
+        }
+
+        if(!options.silent) {
+            this.trigger("change");
+        }
+
+        return this;
     },
 
     get: function(key) {
-        return this.properties[key];
+        var mutated = this.mutate(key);
+        return mutated || this.properties[key];
+    },
+
+    mutate: function(key, value) {
+        var mutator = this.mutators[key];
+
+        if(!mutator) {
+            return value;
+        }
+
+        if(value && mutator.set) {
+            value = mutator.set.call(this, value);
+        } else if(value === undefined && mutator.get) {
+            value = mutator.get.call(this);
+        } else {
+            value = mutator.call(this, value);
+        }
+
+        return value;
+    },
+
+    keys: function() {
+        return object.keys(this.properties);
+    },
+
+    values: function() {
+        var values = [];
+
+        array.forEach(this.keys(), function(key) {
+            values.push(this.get(key));
+        }, this);
+
+        return values;
+    },
+
+    toObject: function() {
+        var properties = {};
+
+        array.forEach(this.keys(), function(key) {
+            properties[key] = this.get(key);
+        }, this);
+
+        return properties;
     },
 
     defineProperty: function(key) {
@@ -69,7 +143,7 @@ Model = Base.extend({
             },
 
             enumerable : true
-        })
+        });
     }
 
 });
