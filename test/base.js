@@ -1,4 +1,6 @@
 describe("The Base class", function() {
+    "use strict";
+
     var Base = require("../src/base.js"),
         array = require("mout/array");
 
@@ -9,7 +11,7 @@ describe("The Base class", function() {
     it("Should call the init method upon creation", function() {
         spyOn(Base.prototype, "init");
 
-        new Base;
+        new Base();
 
         expect(Base.prototype.init).toHaveBeenCalled();
     });
@@ -50,7 +52,7 @@ describe("The Base class", function() {
         it("Should create a derived class", function() {
             var Derived = Base.extend();
 
-            expect(new Derived instanceof Base).toBe(true);
+            expect(new Derived() instanceof Base).toBe(true);
             expect(Derived.extend).toBe(Base.extend);
         });
 
@@ -69,7 +71,7 @@ describe("The Base class", function() {
         it("Should create a derived class with the provided constructor", function() {
             var constructor = function() {},
                 Derived = Base.extend({ constructor: constructor }),
-                derived = new Derived;
+                derived = new Derived();
 
             expect(derived instanceof constructor).toBe(true);
         });
@@ -77,14 +79,14 @@ describe("The Base class", function() {
 
     describe("Events", function() {
         it("Should clear the events stack upon creation", function() {
-            var base = new Base;
+            var base = new Base();
 
             expect(base._events).not.toBe(Base.prototype._events);
             expect(base._events).toEqual(jasmine.any(Object));
         });
 
         it("Should add simple events to the events stack", function() {
-            var base = new Base,
+            var base = new Base(),
                 eventName = "foo", handler = function() {}, context = {},
                 stack;
 
@@ -97,7 +99,7 @@ describe("The Base class", function() {
         });
 
         it("Should add a string of events to the events stack", function() {
-            var base = new Base,
+            var base = new Base(),
                 events = "foo bar", handler = function() {}, context = {};
 
             base.on(events, handler, context);
@@ -111,7 +113,7 @@ describe("The Base class", function() {
         });
 
         it("Should add an array of events to the events stack", function() {
-            var base = new Base,
+            var base = new Base(),
                 events = ["foo", "bar"], handler = function() {}, context = {};
 
             base.on(events, handler, context);
@@ -125,7 +127,7 @@ describe("The Base class", function() {
         });
 
         it("Should add namespaced events to the events stack", function() {
-            var base = new Base,
+            var base = new Base(),
                 eventName = "foo", namespace = "bar", handler = function() {}, context = {},
                 stack;
 
@@ -139,7 +141,7 @@ describe("The Base class", function() {
         });
 
         it("Should remove events by name", function() {
-            var base = new Base,
+            var base = new Base(),
                 eventName = "foo";
 
             base.on(eventName)
@@ -150,7 +152,7 @@ describe("The Base class", function() {
         });
 
         it("Should remove events by namespace", function() {
-            var base = new Base,
+            var base = new Base(),
                 eventName = "foo", namespace = "bar",
                 stack;
 
@@ -166,7 +168,7 @@ describe("The Base class", function() {
         });
 
         it("Should remove events by handler", function() {
-            var base = new Base,
+            var base = new Base(),
                 eventName = "foo", handler = function() {},
                 stack;
 
@@ -182,7 +184,7 @@ describe("The Base class", function() {
         });
 
         it("Should remove events by handler and context", function() {
-            var base = new Base,
+            var base = new Base(),
                 eventName = "foo", handler = function() {}, context = {},
                 stack;
 
@@ -197,7 +199,7 @@ describe("The Base class", function() {
         });
 
         it("Should trigger a simple event", function() {
-            var base = new Base,
+            var base = new Base(),
                 eventName = "foo", handler = jasmine.createSpy("handler");
 
             base.on(eventName, handler)
@@ -207,8 +209,8 @@ describe("The Base class", function() {
         });
 
         it("Should trigger a namespaced event", function() {
-            var base = new Base,
-                eventName = "foo", namespace = ":bar", handler = jasmine.createSpy("handler"), notCalledHandler = jasmine.createSpy("handler");;
+            var base = new Base(),
+                eventName = "foo", namespace = ":bar", handler = jasmine.createSpy("handler"), notCalledHandler = jasmine.createSpy("handler");
 
             base.on(eventName + namespace, handler)
                 .on(eventName, notCalledHandler)
@@ -219,7 +221,7 @@ describe("The Base class", function() {
         });
 
         it("Should pass arguments to a handler", function() {
-            var base = new Base,
+            var base = new Base(),
                 eventName = "foo", arg = "bar", handler = jasmine.createSpy("handler");
 
             base.on(eventName, handler)
@@ -229,7 +231,7 @@ describe("The Base class", function() {
         });
 
         it("Should only trigger handlers added with .once() one time", function() {
-            var base = new Base,
+            var base = new Base(),
                 eventName = "foo", handler = jasmine.createSpy("handler");
 
             base.once(eventName, handler)

@@ -1,5 +1,6 @@
 describe("The index file", function() {
-
+    "use strict";
+    
     it("Should include the Base class", function() {
         var index = require("../src/index.js"),
             Base = require("../src/base.js");

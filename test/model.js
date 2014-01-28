@@ -1,10 +1,11 @@
 describe("The Model", function() {
+    "use strict";
 
     var Model = require("../src/model.js"),
         Base = require("../src/base.js");
 
     it("Should inherit from the Base class", function() {
-        expect(new Model instanceof Base).toBe(true);
+        expect(new Model() instanceof Base).toBe(true);
     });
 
     describe("Creation", function() {
@@ -32,7 +33,7 @@ describe("The Model", function() {
 
     describe("Set", function() {
         it("Should be able to set a hash of properties", function() {
-            var model = new Model, key,
+            var model = new Model(), key,
                 properties = { foo: "bar", bar: "foo" };
 
             model.set(properties);
@@ -180,7 +181,7 @@ describe("The Model", function() {
 
             model.unset("foo", { silent: true });
 
-            expect(handler).not.toHaveBeenCalled(); 
+            expect(handler).not.toHaveBeenCalled();
         });
 
         it("Should be able to unset an array of properties", function() {

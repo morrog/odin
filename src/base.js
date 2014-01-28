@@ -3,6 +3,8 @@ var object = require("mout/object"),
     array = require("mout/array"),
 
 Base = function() {
+    "use strict";
+
     var options = array.slice(arguments, -1);
 
     if(lang.isObject(options[0])) {
@@ -33,12 +35,12 @@ Base.prototype = {
     },
 
     on: function(names, handler, context) {
-        var i, len, namespace, stack, ev;
+        var i, len, stack, ev;
 
         names = lang.isArray(names) ? names : names.split(" ");
 
         for(i = 0, len = names.length; i < len; i++) {
-            ev = this._createEvent(names[i], handler, context)
+            ev = this._createEvent(names[i], handler, context);
             stack = this._getStack(ev.name);
 
             stack.push(ev);
@@ -57,9 +59,13 @@ Base.prototype = {
 
     off: function(names, handler, context) {
         return this._eachEvent(names, function(e) {
-            var s = this._getStack(e.name); 
+            var s = this._getStack(e.name);
+
             array.remove(s, e);
-            if(!s.length) delete this._events[e.name];
+
+            if(!s.length) {
+                delete this._events[e.name];
+            }
         }, handler, context);
     },
 
@@ -108,7 +114,7 @@ Base.prototype = {
         var i, len, ev, stack, events;
 
         names = lang.isArray(names) ? names : names.split(" ");
-
+        
         for(i = 0, len = names.length; i < len; i++) {
             ev = this._createEvent(names[i], handler, context);
             stack = this._getStack(ev.name);
@@ -123,17 +129,27 @@ Base.prototype = {
                 continue;
             }
 
-            array.forEach(events, function(e) {
-                if(e.namespace && e.namespace !== ev.namespace) return;
-                callback.call(this, e);
-            }, this);
+            array.forEach(events, this._createCaller(ev, callback, this));
         }
 
         return this;
     },
 
+    _createCaller: function(ev, callback, context) {
+        return function (e) {
+            if(e.namespace && e.namespace !== ev.namespace) {
+                return;
+            }
+
+            callback.call(context, e);
+        };
+    },
+
     _getStack: function(name) {
-        if(!name) return array.flatten(object.values(this._events));
+        if(!name) {
+            return array.flatten(object.values(this._events));
+        }
+
         return this._events[name] || (this._events[name] = []);
     },
 
@@ -144,16 +160,24 @@ Base.prototype = {
         namespace = name[1];
         name = name[0];
 
-        if(name) ev.name = name;
-        if(namespace) ev.namespace = namespace;
-        if(handler) ev.handler = handler;
+        if(name) {
+            ev.name = name;
+        }
+
+        if(namespace) {
+             ev.namespace = namespace;
+        }
+        
+        if(handler) {
+             ev.handler = handler;
+        }
 
         return ev;
     }
 };
 
 Base.extend = function(proto, static) {
-    var parent = this, constructor, derived;
+    var parent = this, derived;
 
     proto = proto || {};
 

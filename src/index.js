@@ -1,17 +1,14 @@
 var Base = require("./base.js"),
-    Model = require("./model.js");
+    Model = require("./model.js"),
+    Validation = require("./validation.js"),
+    Odin;
 
 module.exports = Odin = {
     Base: Base,
-    Model: Model
+    Model: Model,
+    Validation: Validation
 };
 
-if(typeof define === "function" && define.amd) {
-    define("Odin", function() {
-        return module.exports;
-    });
-} else {
-    try {
-        window.Odin = module.exports;
-    } catch(e){}
-}
+try {
+    window.Odin = module.exports;
+} catch(e){}

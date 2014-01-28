@@ -12,15 +12,15 @@ Model = Base.extend({
     changed: {},
     previousProperties: {},
 
-    constructor: function(properties, options) {
+    constructor: function(properties) {
         this.properties = lang.clone(this.properties);
         this.set(object.merge(this.properties, properties));
-
+        
         return Model.super_.apply(this, arguments);
     },
 
     set: function(key, value, options) {
-        var props, prop;
+        var props;
 
         if(lang.isObject(key)) {
             props = key;
