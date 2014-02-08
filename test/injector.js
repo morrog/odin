@@ -11,7 +11,7 @@ describe("The Odin.Injector", function() {
 			var foo = function() { };
 
 			Injector.set("foo", foo);
-			expect(Injector.dependencies.foo.factory).toBe(false);
+			expect(Injector.dependencies.foo.factory).toBe(foo);
 		});
 
 		it("Should add dependencies with arguments", function() {
