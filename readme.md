@@ -19,7 +19,7 @@ bower install odin
 Check out all the [examples](https://github.com/martinforre/odin/examples)
 
 ## Documentation
-Head on over to the [docs](http://odinjs.org/docs)
+Head on over to the [docs](http://martinforre.github.io/odin/docs)
 
 ## License
 [GPLv3](http://www.gnu.org/licenses/gpl-3.0.txt) © [Martin Førre](https://github.com/martinforre)
