@@ -4,7 +4,10 @@ var gulp = require("gulp"),
     uglify = require("gulp-uglify"),
     jasmine = require("gulp-jasmine"),
     jshint = require("gulp-jshint"),
-    gzip = require("gulp-gzip");
+    gzip = require("gulp-gzip"),
+    clean = require("gulp-clean"),
+    git = require('gulp-git'),
+    bump = require("gulp-bump");
 
 gulp.task("build", ["test"], function() {
     return gulp.src(["src/*.js"])
@@ -30,6 +33,35 @@ gulp.task("test", function() {
     return gulp.src(["test/*.js"])
         .pipe(jasmine());
 });
+
+gulp.task('clean', function () {
+  return gulp.src('./dist', { read: false })
+    .pipe(clean());
+});
+
+
+gulp.task('npm', function (done) {
+  require('child_process').spawn('npm', ['publish'], { stdio: 'inherit' }).on('close', done);
+});
+
+gulp.task('bump', ['dist'], function () {
+  return gulp.src(['./package.json'])
+    .pipe(bump())
+    .pipe(gulp.dest('./'));
+});
+
+gulp.task('tag', ['bump'], function () {
+  var pkg = require('./package.json');
+  var v = 'v' + pkg.version;
+  var message = 'Release ' + v;
+
+  return gulp.src('./')
+    .pipe(git.commit(message))
+    .pipe(git.tag(v, message))
+    .pipe(git.push('origin', 'master', '--tags'))
+    .pipe(gulp.dest('./'));
+});
+
 
 gulp.task("watch", ["build"], function() {
     return gulp.watch(["src/*.js", "test/*.js"], ["test"]);
