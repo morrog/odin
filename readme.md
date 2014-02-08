@@ -3,20 +3,22 @@
 
 ## Install
 
-Install with [npm](https://npmjs.org/package/odin)
+Install with [npm](https://npmjs.org/package/odin) _Not published yet_
 
 ```
 npm install odin
 ```
+
 ```
 npm install --save odin
 ```
 
-Or with [bower](http://bower.io/)
+Or with [bower](http://bower.io/) _Not published yet_
 
 ```
 bower install odin
 ```
+
 ```
 bower install --save odin
 ```
