@@ -6,69 +6,79 @@ var gulp = require("gulp"),
     jshint = require("gulp-jshint"),
     gzip = require("gulp-gzip"),
     clean = require("gulp-clean"),
-    git = require('gulp-git'),
-    bump = require("gulp-bump");
+    git = require("gulp-git"),
+    bump = require("gulp-bump"),
 
+    srcFiles = ["src/*.js"],
+    testFiles = ["test/*.js"],
+    buildDir = "build",
+    buildFiles = [buildDir + "/*.js"],
+    distDir = "dist",
+    distFiles = [distDir + "/*.js"];
+
+// Pre tasks
 gulp.task("jshint", function() {
-    return gulp.src(["src/*.js"])
+    return gulp.src(srcFiles)
         .pipe(jshint(".jshintrc"))
-        .pipe(jshint.reporter('jshint-stylish'))
+        .pipe(jshint.reporter("jshint-stylish"));
 });
 
-gulp.task("build", ["test"], function() {
-    return gulp.src(["src/*.js"])
+gulp.task("clean-build", function () {
+    return gulp.src([buildDir], { read: false }).pipe(clean());
+});
+
+gulp.task("clean-dist", function () {
+    return gulp.src([distDir], { read: false }).pipe(clean());
+});
+
+// Test tasks
+gulp.task("test", ["jshint"], function() {
+    return gulp.src(testFiles).pipe(jasmine());
+});
+
+// Build tasks
+gulp.task("build", ["test", "clean-build"], function() {
+    return gulp.src(srcFiles)
         .pipe(browserify())
-        .pipe(gulp.dest("build"));
+        .pipe(gulp.dest(buildDir));
 });
 
-gulp.task("dist", ["build"], function() {
-    return gulp.src("build/*.js")
+gulp.task("dist", ["build", "clean-dist"], function() {
+    return gulp.src(buildFiles)
         .pipe(uglify())
-        .pipe(gulp.dest("dist"));
+        .pipe(gulp.dest(distDir));
 });
 
 gulp.task("compress", ["dist"], function() {
-    return gulp.src("dist/*.js")
+    return gulp.src(distFiles)
         .pipe(gzip())
-        .pipe(gulp.dest("dist"));
+        .pipe(gulp.dest(distDir));
 });
 
-gulp.task("test", ["jshint"], function() {
-    return gulp.src(["test/*.js"])
-        .pipe(jasmine());
+// Util tasks
+gulp.task("npm", function (done) {
+    require("child_process").spawn("npm", ["publish"], { stdio: "inherit" }).on("close", done);
 });
 
-gulp.task('clean', function () {
-  return gulp.src('./dist', { read: false })
-    .pipe(clean());
+gulp.task("bump", ["test"], function () {
+    return gulp.src(["./package.json"])
+        .pipe(bump())
+        .pipe(gulp.dest("./"));
 });
 
+gulp.task("tag", ["bump"], function () {
+    var pkg = require("./package.json"),
+        message = "Release v" + pkg.version;
 
-gulp.task('npm', function (done) {
-  require('child_process').spawn('npm', ['publish'], { stdio: 'inherit' }).on('close', done);
+    return gulp.src("./")
+        .pipe(git.commit(message))
+        .pipe(git.tag(v, message))
+        .pipe(git.push("origin", "master", "--tags"))
+        .pipe(gulp.dest("./"));
 });
-
-gulp.task('bump', ["test"], function () {
-  return gulp.src(['./package.json'])
-    .pipe(bump())
-    .pipe(gulp.dest('./'));
-});
-
-gulp.task('tag', ['bump'], function () {
-  var pkg = require('./package.json');
-  var v = 'v' + pkg.version;
-  var message = 'Release ' + v;
-
-  return gulp.src('./')
-    .pipe(git.commit(message))
-    .pipe(git.tag(v, message))
-    .pipe(git.push('origin', 'master', '--tags'))
-    .pipe(gulp.dest('./'));
-});
-
 
 gulp.task("watch", ["build"], function() {
-    return gulp.watch(["src/*.js", "test/*.js"], ["test"]);
+    return gulp.watch(srcFiles.concat(testFiles), ["test"]);
 });
 
 gulp.task("default", ["watch"]);
