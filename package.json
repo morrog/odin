@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Yet another JavaScript MVC framework. But this one works well with Node.JS! And there's some other schtuff too!",
   "main": "dist/odin.js",
-  "repository": "",
+  "repository": "https://github.com/MartinForre/odin",
   "author": "Martin Førre",
   "license": "GPLv3",
   "scripts": {
