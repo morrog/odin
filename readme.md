@@ -1,4 +1,4 @@
-#Odin.js
+#Odin.js [![Build Status](https://travis-ci.org/MartinForre/odin.png?branch=master)](https://travis-ci.org/MartinForre/odin)
 > It's not _that_ cool, But it works awesomeley with [Node.js](http://nodejs.org/) and [Express](http://expressjs.com/) ([example](https://github.com/martinforre/odin/examples/express))
 
 ## Install
