@@ -4,45 +4,35 @@ var gulp = require("gulp"),
     uglify = require("gulp-uglify"),
     jasmine = require("gulp-jasmine"),
     jshint = require("gulp-jshint"),
+    gzip = require("gulp-gzip");
 
-    testFiles = "test/*.js",
-    sourceFiles = "src/*.js",
-
-    jshintOptions = {
-        camelcase: true,
-        curly: true,
-        freeze: true,
-        latedef: true,
-        newcap: true,
-        noarg: true,
-        nonbsp: true,
-        undef: true,
-        unused: true,
-        trailing: true,
-        onevar: true,
-        node: true,
-        browser: true,
-        globals: { describe: true, it: true, expect: true, spyOn: true, jasmine: true }
-    };
-
-gulp.task("scripts", ["test"], function() {
+gulp.task("build", ["test"], function() {
     return gulp.src(["src/*.js"])
-        .pipe(jshint(jshintOptions))
+        .pipe(jshint(".jshintrc"))
         .pipe(jshint.reporter('jshint-stylish'))
         .pipe(browserify())
+        .pipe(gulp.dest("build"));
+});
+
+gulp.task("dist", ["build"], function() {
+    return gulp.src("build/*.js")
         .pipe(uglify())
         .pipe(gulp.dest("dist"));
 });
 
+gulp.task("compress", ["dist"], function() {
+    return gulp.src("dist/*.js")
+        .pipe(gzip())
+        .pipe(gulp.dest("dist"));
+});
+
 gulp.task("test", function() {
-    return gulp.src([testFiles])
-        .pipe(jshint(jshintOptions))
-        .pipe(jshint.reporter('jshint-stylish'))
+    return gulp.src(["test/*.js"])
         .pipe(jasmine());
 });
 
-gulp.task("watch", function() {
-    return gulp.watch([sourceFiles, testFiles], ["test"]);
+gulp.task("watch", ["build"], function() {
+    return gulp.watch(["src/*.js", "test/*.js"], ["test"]);
 });
 
-gulp.task("default", ["scripts"]);
+gulp.task("default", ["watch"]);

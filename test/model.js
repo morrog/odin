@@ -1,8 +1,9 @@
 describe("The Model", function() {
     "use strict";
 
-    var Model = require("../src/model.js"),
-        Base = require("../src/base.js");
+    var Model = require("../src/model"),
+        Base = require("../src/base"),
+        Validator = require("../src/validator");
 
     it("Should inherit from the Base class", function() {
         expect(new Model() instanceof Base).toBe(true);
@@ -148,6 +149,18 @@ describe("The Model", function() {
             expect(model.foo).toBe("foobar!");
             expect(model.properties.foo).toBe("foobar");
         });
+
+        it("Should include mutators when getting a plain object representation of the model", function() {
+            var foo = "bar",
+                MyModel = Model.extend({
+                    mutators: {
+                        foo: function() { return foo; }
+                    }
+                }),
+                model = new MyModel();
+
+            expect(model.toObject().foo).toBe(foo);
+        });
     });
     
     describe("Unset", function() {
@@ -203,6 +216,34 @@ describe("The Model", function() {
         });
     });
 
+    describe("Validation", function() {
+        it("Should have a validation property that inherits from Odin.Validator", function() {
+            var model = new Model();
+
+            expect(model.validator instanceof Validator).toBe(true);
+        });
+
+        it("Should not allow invalid values to be set on construction", function() {
+            var MyModel = Model.extend({
+                    rules: { foo: { required: true } }
+                }),
+                model = new MyModel({ foo: ""});
+
+            expect(model.foo).toBeUndefined();
+        });
+
+        it("Should not allow invalid values to be set", function() {
+            var MyModel = Model.extend({
+                    rules: { foo: { required: true } }
+                }),
+                model = new MyModel({ foo: "bar" });
+
+            model.foo = "";
+
+            expect(model.foo).toBe("bar");
+        });
+    });
+
     it("Should be able to get an array of the property keys", function() {
         var model = new Model({ foo: "bar", bar: "foo" });
 
@@ -220,6 +261,24 @@ describe("The Model", function() {
             model = new Model(properties);
 
         expect(model.toObject()).toEqual(properties);
+    });
+
+    it("Should be able to get a JSON string of the properties", function() {
+        var json = '{"foo":"bar"}',
+            model = new Model(JSON.parse(json));
+
+        spyOn(model, "toObject").andCallThrough();
+
+        expect(model.toJSON()).toEqual(json);
+        expect(model.toObject).toHaveBeenCalled();
+    });
+
+    it("Should be clonable", function() {
+        var model = new Model({ foo: "bar" }),
+            clone = model.clone();
+
+        expect(clone instanceof Model).toBe(true);
+        expect(clone.toObject()).toEqual(model.toObject());
     });
 
 });

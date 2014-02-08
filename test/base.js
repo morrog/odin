@@ -1,7 +1,8 @@
 describe("The Base class", function() {
     "use strict";
 
-    var Base = require("../src/base.js"),
+    var Base = require("../src/base"),
+        Injector = require("../src/injector"),
         array = require("mout/array");
 
     it("Should be defined", function() {
@@ -241,6 +242,19 @@ describe("The Base class", function() {
                 .trigger(eventName);
 
             expect(handler.calls.length).toBe(1);
+        });
+    });
+
+    describe("Injecting", function() {
+        it("Should inject dependencies", function() {
+            var Derived = Base.extend({
+                    inject: { foo: "foo" }
+                }),
+                foo = function() {};
+
+            Injector.set("foo", foo);
+
+            expect(new Derived().foo instanceof foo).toBe(true);
         });
     });
 });

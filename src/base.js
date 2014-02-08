@@ -1,15 +1,31 @@
-var object = require("mout/object"),
-    lang = require("mout/lang"),
-    array = require("mout/array"),
+var Injector = require("./injector"),
+    slice = require("mout/array/slice"),
+    filter = require("mout/array/filter"),
+    flatten = require("mout/array/flatten"),
+    remove = require("mout/array/remove"),
+    isObject = require("mout/lang/isObject"),
+    isArray = require("mout/lang/isArray"),
+    inheritPrototype = require("mout/lang/inheritPrototype"),
+    fillIn = require("mout/object/fillIn"),
+    forOwn = require("mout/object/forOwn"),
+    pick = require("mout/object/pick"),
+    hasOwn = require("mout/object/hasOwn"),
+    merge = require("mout/object/merge"),
+    values = require("mout/object/values"),
+    hasDefine = typeof define === "function" && define.amd,
+
 
 Base = function() {
     "use strict";
 
-    var options = array.slice(arguments, -1);
+    var options = slice(arguments, -1);
 
-    if(lang.isObject(options[0])) {
+    this.options = {};
+    if(isObject(options[0])) {
         this.setOptions(options[0]);
     }
+
+    this._resolveDependencies(options.inject);
 
     this._events = {};
     return this.init.apply(this, arguments);
@@ -22,14 +38,15 @@ Base.prototype = {
     mine: [],
     defaults: {},
     options: {},
+    inject: {},
 
     init: function() {
         return this;
     },
 
     setOptions: function(options) {
-        object.deepMixIn(this.options, this.defaults, options);
-        object.deepMixIn(this, object.pick(this.options, this.mine));
+        this.options = merge(this.options, this.defaults, options);
+        fillIn(this, pick(this.options, this.mine));
 
         return this;
     },
@@ -37,7 +54,7 @@ Base.prototype = {
     on: function(names, handler, context) {
         var i, len, stack, ev;
 
-        names = lang.isArray(names) ? names : names.split(" ");
+        names = isArray(names) ? names : names.split(" ");
 
         for(i = 0, len = names.length; i < len; i++) {
             ev = this._createEvent(names[i], handler, context);
@@ -61,7 +78,7 @@ Base.prototype = {
         return this._eachEvent(names, function(e) {
             var s = this._getStack(e.name);
 
-            array.remove(s, e);
+            remove(s, e);
 
             if(!s.length) {
                 delete this._events[e.name];
@@ -70,7 +87,7 @@ Base.prototype = {
     },
 
     trigger: function(names) {
-        var args = array.slice(arguments, 1);
+        var args = slice(arguments, 1);
 
         return this._eachEvent(names, function(e) {
             this._triggerEvent(e, args);
@@ -111,9 +128,9 @@ Base.prototype = {
     },
 
     _eachEvent: function(names, callback, handler, context) {
-        var i, len, ev, stack, events;
+        var i, j, len, ev, stack, events;
 
-        names = lang.isArray(names) ? names : names.split(" ");
+        names = isArray(names) ? names : names.split(" ");
         
         for(i = 0, len = names.length; i < len; i++) {
             ev = this._createEvent(names[i], handler, context);
@@ -123,31 +140,27 @@ Base.prototype = {
                 continue;
             }
 
-            events = array.filter(stack, ev);
+            events = filter(stack, ev);
 
             if(!events || !events.length) {
                 continue;
             }
 
-            array.forEach(events, this._createCaller(ev, callback, this));
+            for(j = 0; j < events.length; j++) {
+                if(events[j].namespace && events[j].namespace !== ev.namespace) {
+                    continue;
+                }
+
+                callback.call(this, events[j]);
+            }
         }
 
         return this;
     },
 
-    _createCaller: function(ev, callback, context) {
-        return function (e) {
-            if(e.namespace && e.namespace !== ev.namespace) {
-                return;
-            }
-
-            callback.call(context, e);
-        };
-    },
-
     _getStack: function(name) {
         if(!name) {
-            return array.flatten(object.values(this._events));
+            return flatten(values(this._events));
         }
 
         return this._events[name] || (this._events[name] = []);
@@ -173,7 +186,15 @@ Base.prototype = {
         }
 
         return ev;
-    }
+    },
+
+    _resolveDependencies: function(dependencies) {
+        dependencies = merge(this.inject, dependencies);
+        
+        forOwn(dependencies, function(dependency, key) {
+            this[key] = Injector.get(dependency, this);
+        }, this);
+    },
 };
 
 Base.extend = function(proto, static) {
@@ -181,19 +202,27 @@ Base.extend = function(proto, static) {
 
     proto = proto || {};
 
-    derived = object.hasOwn(proto, "constructor") ?
+    derived = hasOwn(proto, "constructor") ?
                     proto.constructor :
                     function() { parent.apply(this, arguments); };
     
-    object.mixIn(derived, parent, static || {});
+    derived = merge(derived, parent, static || {});
     
-    lang.inheritPrototype(derived, parent);
+    inheritPrototype(derived, parent);
 
-    object.mixIn(derived.prototype, proto);
+    derived.prototype = merge(derived.prototype, proto);
     
     derived.prototype.constructor = derived;
     
     return derived;
 };
 
-module.exports = Base;
+Base.defineMe = function() {
+    if(hasDefine) {
+        define([], this);
+    }
+
+    return this;
+};
+
+module.exports = Base.defineMe();

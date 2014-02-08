@@ -1,0 +1,16 @@
+{
+    "camelcase": true,
+    "curly": true,
+    "freeze": true,
+    "latedef": true,
+    "newcap": true,
+    "noarg": true,
+    "nonbsp": true,
+    "undef": true,
+    "unused": true,
+    "trailing": true,
+    "onevar": true,
+    "node": true,
+    "browser": true,
+    "globals": { "describe": true, "it": true, "expect": true, "spyOn": true, "jasmine": true, "define": true, "$": true }
+}

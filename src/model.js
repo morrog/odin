@@ -1,7 +1,15 @@
-var Base = require("./base.js"),
-    lang = require("mout/lang"),
-    object = require("mout/object"),
-    array = require("mout/array"),
+var Base = require("./base"),
+
+    clone = require("mout/lang/clone"),
+    isObject = require("mout/lang/isObject"),
+    isArray = require("mout/lang/isArray"),
+
+    merge = require("mout/object/merge"),
+    keys = require("mout/object/keys"),
+    pick = require("mout/object/pick"),
+    hasOwn = require("mout/object/hasOwn"),
+
+    forEach = require("mout/array/forEach"),
 
 Model = Base.extend({
 
@@ -11,18 +19,30 @@ Model = Base.extend({
     mutators: {},
     changed: {},
     previousProperties: {},
+    rules: {},
+    validator: {},
+    inject: { validator: "validator" },
 
     constructor: function(properties) {
-        this.properties = lang.clone(this.properties);
-        this.set(object.merge(this.properties, properties));
+        this.properties = clone(this.properties);
+
+        // Setting values might require dependencies (see .validator)
+        // so it's best to resolve these before calling .set()
+        this._resolveDependencies();
+
+        this.set(merge(this.properties, properties));
         
+        // Define mutator properties after defining actual properties
+        // to prevent mutators overwriting properties
+        this.defineMutators();
+
         return Model.super_.apply(this, arguments);
     },
 
     set: function(key, value, options) {
         var props;
 
-        if(lang.isObject(key)) {
+        if(isObject(key)) {
             props = key;
             options = value;
         } else {
@@ -32,19 +52,17 @@ Model = Base.extend({
         options = options || {};
 
         this.changed = {};
-        this.previousProperties = lang.clone(this.properties);
+        this.previousProperties = clone(this.properties);
 
         for(key in props) {
-            if(!object.hasOwn(this, key)) {
-                this.defineProperty(key);
-            }
-
-            if(props[key] === this.get(key)) {
+            this.defineProperty(key);
+            
+            if(props[key] === this.get(key) || !this.validator.run(this.rules, key, props[key], options)) {
                 continue;
             }
 
             this.changed[key] = this.properties[key];
-            this.properties[key] = this.mutate(key, props[key]);
+            this.properties[key] = this.mutate("set", key, props[key]);
 
             if(key === this.primary) {
                 this.id = this.properties[key];
@@ -65,7 +83,7 @@ Model = Base.extend({
     unset: function(keys, options) {
         var value, i, len;
 
-        keys = lang.isArray(keys) ? keys : keys.split(" ");
+        keys = isArray(keys) ? keys : keys.split(" ");
         options = options || {};
 
         for(i = 0, len = keys.length; i < len; i++) {
@@ -86,36 +104,47 @@ Model = Base.extend({
     },
 
     get: function(key) {
-        var mutated = this.mutate(key);
-        return mutated || this.properties[key];
+        if(this.hasMutator(key)) {
+            return this.mutate("get", key);
+        }
+
+        return this.properties[key];
     },
 
-    mutate: function(key, value) {
+    mutate: function(method, key, value) {
         var mutator = this.mutators[key];
 
         if(!mutator) {
             return value;
         }
 
-        if(value && mutator.set) {
+        if(method === "set" && mutator.set) {
             value = mutator.set.call(this, value);
-        } else if(value === undefined && mutator.get) {
+        } else if(method === "get" && mutator.get) {
             value = mutator.get.call(this);
-        } else {
+        } else if(typeof mutator === "function") {
             value = mutator.call(this, value);
         }
 
         return value;
     },
 
+    hasMutator: function(key) {
+        return this.mutators[key] && this.isMutator(this.mutators[key]);
+    },
+
+    isMutator: function(mutator) {
+        return mutator.get || mutator.set || typeof mutator === "function";
+    },
+
     keys: function() {
-        return object.keys(this.properties);
+        return keys(merge(this.properties, this.mutators));
     },
 
     values: function() {
         var values = [];
 
-        array.forEach(this.keys(), function(key) {
+        forEach(this.keys(), function(key) {
             values.push(this.get(key));
         }, this);
 
@@ -123,16 +152,22 @@ Model = Base.extend({
     },
 
     toObject: function() {
-        var properties = {};
+        return pick(this, this.keys());
+    },
 
-        array.forEach(this.keys(), function(key) {
-            properties[key] = this.get(key);
-        }, this);
+    toJSON: function() {
+        return JSON.stringify(this.toObject());
+    },
 
-        return properties;
+    clone: function() {
+        return new this.constructor(this.toObject());
     },
 
     defineProperty: function(key) {
+        if(hasOwn(this, key)) {
+            return;
+        }
+
         Object.defineProperty(this, key, {
             get: function() {
                 return this.get(key);
@@ -144,8 +179,22 @@ Model = Base.extend({
 
             enumerable : true
         });
+
+        if(this.hasMutator(key) && this.mutators[key].rules) {
+            // Set rules
+        }
+    },
+
+    defineMutators: function() {
+        var key;
+
+        for(key in this.mutators) {
+            if(this.isMutator(this.mutators[key])) {
+                this.defineProperty(key);
+            }
+        }
     }
 
 });
 
-module.exports = Model;
+module.exports = Model.defineMe();
