@@ -1,6 +1,6 @@
 {
   "name": "Odin",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Yet another JavaScript MVC framework. But this one works well with Node.JS! And there's some other schtuff too!",
   "main": "dist/odin.js",
   "repository": "https://github.com/MartinForre/odin",

@@ -9,10 +9,14 @@ var gulp = require("gulp"),
     git = require('gulp-git'),
     bump = require("gulp-bump");
 
-gulp.task("build", ["test"], function() {
+gulp.task("jshint", function() {
     return gulp.src(["src/*.js"])
         .pipe(jshint(".jshintrc"))
         .pipe(jshint.reporter('jshint-stylish'))
+});
+
+gulp.task("build", ["test"], function() {
+    return gulp.src(["src/*.js"])
         .pipe(browserify())
         .pipe(gulp.dest("build"));
 });
@@ -29,7 +33,7 @@ gulp.task("compress", ["dist"], function() {
         .pipe(gulp.dest("dist"));
 });
 
-gulp.task("test", function() {
+gulp.task("test", ["jshint"], function() {
     return gulp.src(["test/*.js"])
         .pipe(jasmine());
 });
@@ -44,7 +48,7 @@ gulp.task('npm', function (done) {
   require('child_process').spawn('npm', ['publish'], { stdio: 'inherit' }).on('close', done);
 });
 
-gulp.task('bump', ['dist'], function () {
+gulp.task('bump', ["test"], function () {
   return gulp.src(['./package.json'])
     .pipe(bump())
     .pipe(gulp.dest('./'));
