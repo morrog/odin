@@ -1,5 +1,5 @@
-#Odin.js [![Build Status](https://travis-ci.org/MartinForre/odin.png?branch=master)](https://travis-ci.org/MartinForre/odin)
-> It's not _that_ cool, But it works awesomeley with [Node.js](http://nodejs.org/) and [Express](http://expressjs.com/) ([example](https://github.com/martinforre/odin/examples/express))
+#Odin.js - JavaScript MV* and stuff [![Build Status](https://travis-ci.org/MartinForre/odin.png?branch=master)](https://travis-ci.org/MartinForre/odin)
+> It's not _that_ cool, But it works awesomeley with [Node.js](http://nodejs.org/)/[Express](http://expressjs.com/) ([example](https://github.com/martinforre/odin/examples/express))
 
 ## Install
 
@@ -9,22 +9,14 @@ Install with [npm](https://npmjs.org/package/odin) _Not published yet_
 npm install odin
 ```
 
-```
-npm install --save odin
-```
-
 Or with [bower](http://bower.io/) _Not published yet_
 
 ```
 bower install odin
 ```
 
-```
-bower install --save odin
-```
-
 ## Examples
-Check out all the [examples](https://github.com/martinforre/odin/examples) or the [TodoMVC](http://todomvc.com/architecture-examples/odin/) example
+Check out all the [examples](https://github.com/martinforre/odin/examples)
 
 ## Documentation
 Head on over to the [docs](http://odinjs.org/docs)
