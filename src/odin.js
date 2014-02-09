@@ -1,18 +1,20 @@
 var Base = require("./base"),
 	Injector = require("./injector"),
     Model = require("./model"),
-    Validator = require("./validator");
+    Validator = require("./validator"),
+    Storage = require("./storage");
 
 module.exports = {
     Base: Base,
     Injector: Injector,
     Model: Model,
-    Validator: Validator
+    Validator: Validator,
+    Storage: Storage
 };
 
 if(process.browser) {
-    // Require zepto, views and other browser schtuff here
     Injector.static("$", $);
+    Injector.static("window", window);
 
     window.Odin = module.exports;
 } else {

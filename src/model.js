@@ -1,4 +1,5 @@
 var Base = require("./base"),
+    Injector = require("./injector"),
 
     clone = require("mout/lang/clone"),
     isObject = require("mout/lang/isObject"),
@@ -196,5 +197,7 @@ Model = Base.extend({
     }
 
 });
+
+Injector.static("Model", Model);
 
 module.exports = Model.defineMe();

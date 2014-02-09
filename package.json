@@ -1,7 +1,7 @@
 {
   "name": "Odin",
   "version": "0.0.1",
-  "description": "Yet another JavaScript MVC framework. But this one works well with Node.JS! And there's some other schtuff too!",
+  "description": "Yet another JavaScript MVC framework. But this one works well with Node.js/ExpressJS! And there's some other schtuff too!",
   "main": "dist/odin.js",
   "repository": {
     "type" : "git",
@@ -10,7 +10,7 @@
   "bugs": {
     "url" : "http://github.com/MartinForre/odin/issues"
   },
-  "author": "Martin Førre",
+  "author": "Martin Førre <martinforre@gmail.com> (https://github.com/MartinForre)",
   "license": "GPLv3",
   "scripts": {
     "test": "node_modules/.bin/minijasminenode test/*.js"

@@ -1,5 +1,5 @@
 #Odin.js - JavaScript MV* and stuff [![Build Status](https://travis-ci.org/MartinForre/odin.png?branch=master)](https://travis-ci.org/MartinForre/odin)
-> It's not _that_ cool, But it works awesomeley with [Node.js](http://nodejs.org/)/[Express](http://expressjs.com/) ([example](https://github.com/martinforre/odin/examples/express))
+> It's not _that_ cool, but it works awesomeley with [Node.js](http://nodejs.org/)/[Express](http://expressjs.com/) ([example](https://github.com/martinforre/odin/examples/express))
 
 ## Install
 
