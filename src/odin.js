@@ -2,21 +2,24 @@ var Base = require("./base"),
 	Injector = require("./injector"),
     Model = require("./model"),
     Validator = require("./validator"),
-    Storage = require("./storage");
+    Storage = require("./storage"),
+    LocalStorage = require("./localStorage");
 
 module.exports = {
     Base: Base,
     Injector: Injector,
     Model: Model,
     Validator: Validator,
-    Storage: Storage
+    Storage: Storage,
+    LocalStorage: LocalStorage
 };
 
 if(process.browser) {
+    window.Odin = module.exports;
+
     Injector.static("$", $);
     Injector.static("window", window);
-
-    window.Odin = module.exports;
+    Injector.static("localStorage", window.localStorage);
 } else {
 	// Require REST service and other node.js schtuff here
 }

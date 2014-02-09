@@ -14,7 +14,8 @@ var gulp = require("gulp"),
     buildDir = "build",
     buildFiles = [buildDir + "/*.js"],
     distDir = "dist",
-    distFiles = [distDir + "/*.js"];
+    distFiles = [distDir + "/*.js"],
+    storageDir = "test/storage";
 
 // Pre tasks
 gulp.task("jshint", function() {
@@ -31,8 +32,12 @@ gulp.task("clean-dist", function () {
     return gulp.src([distDir], { read: false }).pipe(clean());
 });
 
+gulp.task("clean-test", function () {
+    return gulp.src([storageDir], { read: false }).pipe(clean());
+});
+
 // Test tasks
-gulp.task("test", ["jshint"], function() {
+gulp.task("test", ["jshint", "clean-test"], function() {
     return gulp.src(testFiles).pipe(jasmine());
 });
 

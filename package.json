@@ -4,11 +4,11 @@
   "description": "Yet another JavaScript MVC framework. But this one works well with Node.js/ExpressJS! And there's some other schtuff too!",
   "main": "dist/odin.js",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/MartinForre/odin"
+    "type": "git",
+    "url": "https://github.com/MartinForre/odin"
   },
   "bugs": {
-    "url" : "http://github.com/MartinForre/odin/issues"
+    "url": "http://github.com/MartinForre/odin/issues"
   },
   "author": "Martin Førre <martinforre@gmail.com> (https://github.com/MartinForre)",
   "license": "GPLv3",
@@ -46,6 +46,7 @@
     "gulp-clean": "~0.2.4",
     "gulp-git": "~0.3.0",
     "jasmine-reporters": "~0.2.1",
-    "minijasminenode": "~0.2.7"
+    "minijasminenode": "~0.2.7",
+    "node-localstorage": "~0.3.4"
   }
 }
