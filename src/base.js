@@ -30,7 +30,6 @@ Base = function() {
     this._events = {};
     return this.init.apply(this, arguments);
 };
-console.log("Test");
 
 Base.prototype = {
     constructor: Base,
