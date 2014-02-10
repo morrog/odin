@@ -254,7 +254,7 @@ describe("The Base class", function() {
                 .trigger("this-event", foo)
                 .trigger("namespaced:event");
 
-            expect(handler.calls.length).toBe(3);
+            expect(handler.calls.count()).toBe(3);
             expect(handler).toHaveBeenCalledWith(foo);
         });
     });
