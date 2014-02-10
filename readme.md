@@ -21,6 +21,16 @@ Check out all the [examples](https://github.com/martinforre/odin/examples)
 ## Documentation
 Head on over to the [docs](http://martinforre.github.io/odin/docs)
 
+## Contributing
+- Fork the project
+- `npm install -g gulp`
+- `npm install`
+- Make some **fabulous** changes (pay attention to the .editorconfig!)
+- `gulp test`
+- Commit && push
+- Make a pull request
+- Fantastic!
+
 ## License
 [GPLv3](http://www.gnu.org/licenses/gpl-3.0.txt) © [Martin Førre](https://github.com/martinforre)
 
