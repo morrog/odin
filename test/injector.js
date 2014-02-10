@@ -1,6 +1,7 @@
 describe("The Odin.Injector", function() {
 
-    var Injector = require("../src/injector");
+    var Injector = require("../src/injector"),
+        Base = require("../src/base");
 
     it("Should be defined", function (){
         expect(Injector).toBeDefined();
@@ -42,6 +43,34 @@ describe("The Odin.Injector", function() {
             Injector.static("foo", foo);
 
             expect(Injector.get("foo")).toBe(foo);
+        });
+
+        it("Should add values to be required", function() {
+            var name = "base";
+
+            Injector.require(name, "base");
+
+            expect(Injector.get(name) instanceof Base).toBe(true);
+        });
+
+        it("Should add singleton values to be required", function() {
+            var name = "base",
+                base;
+
+            Injector.requireSingle(name, "base");
+
+            base = Injector.get(name);
+
+            expect(base instanceof Base).toBe(true);
+            expect(Injector.get(name)).toBe(base);
+        });
+
+        it("Should add values to be required without the root path prefix", function() {
+            var name = "base";
+
+            Injector.require(name, "!../src/base");
+
+            expect(Injector.get(name) instanceof Base).toBe(true);
         });
     });
 

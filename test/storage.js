@@ -120,6 +120,24 @@ describe("Odin.Storage", function() {
                 done();
             });
         });
+
+        it("Should update a hash of objects", function(done) {
+            var storage = new Storage(),
+                storeName = "my-store",
+                id1 = Storage.uid(),
+                id2 = Storage.uid(),
+                data = { id1: { id: id1, foo: "bar"}, id2: { id: id2, foo: "fobar" } },
+                newData = { id1: { id: id1, foo: "bar"}, id2: { id: id2, foo: "foobar" } };
+
+
+            storage.add(data, { store: storeName, reset: true });
+            storage.update(newData, { store: storeName });
+
+            storage.get(storeName, function(result) {
+                expect(result).toEqual(newData);
+                done();
+            });
+        });
     });
 
     describe("Deleting", function() {

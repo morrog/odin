@@ -209,6 +209,44 @@ describe("The Base class", function() {
             expect(handler).toHaveBeenCalled();
         });
 
+        it("Should trigger an array of events", function() {
+            var base = new Base(),
+                eventNames = ["foo", "bar"], handler = jasmine.createSpy("handler");
+
+            base.on(eventNames, handler)
+                .trigger(eventNames);
+
+            expect(handler).toHaveBeenCalled();
+        });
+
+        it("Should not try to trigger invalid handlers", function() {
+            var base = new Base(),
+                eventName = "foo";
+
+            base.on(eventName, false)
+                .trigger(eventName);
+        });
+
+        it("Should handle multiple arguments when triggering", function() {
+            var base = new Base(),
+                eventName = "foo", handler = jasmine.createSpy("handler");
+
+            base.on(eventName, handler)
+                .trigger(eventName, 1)
+                .trigger(eventName, 1, 2)
+                .trigger(eventName, 1, 2, 3)
+                .trigger(eventName, 1, 2, 3, 4)
+                .trigger(eventName, 1, 2, 3, 4, 5)
+                .trigger(eventName, 1, 2, 3, 4, 5, 6);
+
+            expect(handler).toHaveBeenCalledWith(1);
+            expect(handler).toHaveBeenCalledWith(1, 2);
+            expect(handler).toHaveBeenCalledWith(1, 2, 3);
+            expect(handler).toHaveBeenCalledWith(1, 2, 3, 4);
+            expect(handler).toHaveBeenCalledWith(1, 2, 3, 4, 5);
+            expect(handler).toHaveBeenCalledWith(1, 2, 3, 4, 5, 6);
+        });
+
         it("Should trigger a namespaced event", function() {
             var base = new Base(),
                 eventName = "foo", namespace = ":bar", handler = jasmine.createSpy("handler"), notCalledHandler = jasmine.createSpy("handler");

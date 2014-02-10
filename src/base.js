@@ -101,7 +101,7 @@ Base.prototype = {
     _triggerEvent: function(ev, args) {
         var context = ev.context || this;
 
-        if(!ev.handler) {
+        if(typeof ev.handler !== "function") {
             return;
         }
 

@@ -73,7 +73,7 @@ module.exports = {
         if(!dependency) {
             return null;
         }
-
+        
         if(dependency.path && !dependency.factory) {
             dependency.factory = this.requireFactory(dependency.path)();
         }

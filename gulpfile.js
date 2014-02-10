@@ -41,7 +41,7 @@ gulp.task("clean-test", function () {
 // Test tasks
 gulp.task("test", ["jshint", "clean-test"], function() {
     return gulp.src(testFiles)
-        .pipe(coverage.instrument({ pattern: [ "src/*" ] }))
+        .pipe(coverage.instrument({ pattern: srcFiles }))
         .pipe(jasmine())
         .pipe(coverage.report({ outFile: artifactsDir + "/coverage.html" }));
 });
