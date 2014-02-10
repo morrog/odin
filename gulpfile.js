@@ -16,6 +16,7 @@ var gulp = require("gulp"),
     buildFiles = [buildDir + "/*.js"],
     distDir = "dist",
     distFiles = [distDir + "/*.js"],
+    artifactsDir = "artifacts",
     storageDir = "test/storage";
 
 // Pre tasks
@@ -42,7 +43,7 @@ gulp.task("test", ["jshint", "clean-test"], function() {
     return gulp.src(testFiles)
         .pipe(coverage.instrument({ pattern: [ "src/*" ] }))
         .pipe(jasmine())
-        .pipe(coverage.report({ reporter: "json", outFile: "./node_modules/coveralls/bin/coveralls.js" }));
+        .pipe(coverage.report({ outFile: artifactsDir + "/coverage.html" }));
 });
 
 // Build tasks
