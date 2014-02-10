@@ -22,6 +22,7 @@ if(process.browser) {
     Injector.static("window.localStorage", window.localStorage);
     
     Injector.static("$", $);
+    Injector.static("ajax", $.ajax);
 } else {
 	// Require REST service and other node.js schtuff here
 }
