@@ -2,9 +2,7 @@ describe("Odin.Storage", function() {
 
 	var Storage = require("../src/storage"),
 		Base = require("../src/base"),
-		size = require("mout/object/size"),
-		_uid = 1,
-		uid = function() { return _uid++; };
+		size = require("mout/object/size");
 
 	it("Should be defined", function() {
 		expect(Storage).toBeDefined();
@@ -18,7 +16,7 @@ describe("Odin.Storage", function() {
 		it("Shoud store single objects", function() {
 			var storage = new Storage(),
 				storeName = "my-store",
-				data = { id: uid(), foo: "bar" };
+				data = { id: Storage.uid(), foo: "bar" };
 
 			storage.add(data, { store: storeName, key: data.id });
 		});
@@ -26,8 +24,8 @@ describe("Odin.Storage", function() {
 		it("Should store a hash of objects", function() {
 			var storage = new Storage(),
 				storeName = "my-store",
-				id1 = uid(),
-				id2 = uid(),
+				id1 = Storage.uid(),
+				id2 = Storage.uid(),
 				data = { id1: { id: id1, foo: "bar"}, id2: { id: id2, foo: "fobar" } };
 
 			storage.add(data, { store: storeName, reset: true });
@@ -36,7 +34,7 @@ describe("Odin.Storage", function() {
 		it("Should broadcast events when storing data", function(done) {
 			var storage = new Storage(),
 				storeName = "my-store",
-				data = { id: uid(), foo: "bar" },
+				data = { id: Storage.uid(), foo: "bar" },
 				handler = jasmine.createSpy("handler");
 
 			storage.on("add:" + storeName, handler)
@@ -49,7 +47,7 @@ describe("Odin.Storage", function() {
 		it("Should not broadcast events when storing data silently", function(done) {
 			var storage = new Storage(),
 				storeName = "my-store",
-				data = { id: uid(), foo: "bar" },
+				data = { id: Storage.uid(), foo: "bar" },
 				handler = jasmine.createSpy("handler");
 
 			storage.on("add:" + storeName, handler)
@@ -64,7 +62,7 @@ describe("Odin.Storage", function() {
 		it("Should get a named object", function(done){
 			var storage = new Storage(),
 				storeName = "my-store",
-				data = { id: uid(), foo: "bar" };
+				data = { id: Storage.uid(), foo: "bar" };
 
 			storage.add(data, { store: storeName, key: data.id });
 
@@ -77,8 +75,8 @@ describe("Odin.Storage", function() {
 		it("Should get a hash of objects", function(done) {
 			var storage = new Storage(),
 				storeName = "my-store",
-				id1 = uid(),
-				id2 = uid(),
+				id1 = Storage.uid(),
+				id2 = Storage.uid(),
 				data = { id1: { id: id1, foo: "bar"}, id2: { id: id2, foo: "fobar" } };
 
 			storage.add(data, { store: storeName, reset: true });
@@ -92,8 +90,8 @@ describe("Odin.Storage", function() {
 		it("Should get the count of a store", function(done) {
 			var storage = new Storage(),
 				storeName = "my-store",
-				id1 = uid(),
-				id2 = uid(),
+				id1 = Storage.uid(),
+				id2 = Storage.uid(),
 				data = { id1: { id: id1, foo: "bar"}, id2: { id: id2, foo: "fobar" } };
 
 			storage.add(data, { store: storeName, reset: true });
@@ -110,7 +108,7 @@ describe("Odin.Storage", function() {
 		it("Should update a named object", function(done) {
 			var storage = new Storage(),
 				storeName = "my-store",
-				data = { id: uid(), foo: "bar" },
+				data = { id: Storage.uid(), foo: "bar" },
 				newData = { foo: "foobar" };
 
 			storage.add(data, { store: storeName, key: data.id });
@@ -128,7 +126,7 @@ describe("Odin.Storage", function() {
 		it("Should delete a named object", function(done) {
 			var storage = new Storage(),
 				storeName = "my-store",
-				data = { id: uid(), foo: "bar" };
+				data = { id: Storage.uid(), foo: "bar" };
 
 			storage.add(data, { store: storeName, key: data.id });
 
@@ -143,8 +141,8 @@ describe("Odin.Storage", function() {
 		it("Should delete a whole store", function(done) {
 			var storage = new Storage(),
 				storeName = "my-store",
-				id1 = uid(),
-				id2 = uid(),
+				id1 = Storage.uid(),
+				id2 = Storage.uid(),
 				data = { id1: { id: id1, foo: "bar"}, id2: { id: id2, foo: "fobar" } };
 
 			storage.add(data, { store: storeName, reset: true })
@@ -159,7 +157,7 @@ describe("Odin.Storage", function() {
 		it("Should broadcast events when deleting an object", function(done) {
 			var storage = new Storage(),
 				storeName = "my-store",
-				data = { id: uid(), foo: "bar" },
+				data = { id: Storage.uid(), foo: "bar" },
 				handler = jasmine.createSpy("handler");
 
 			storage.add(data, { store: storeName, key: data.id })
@@ -176,7 +174,7 @@ describe("Odin.Storage", function() {
 		it("Should broadcast events when deleting an object silently", function(done) {
 			var storage = new Storage(),
 				storeName = "my-store",
-				data = { id: uid(), foo: "bar" },
+				data = { id: Storage.uid(), foo: "bar" },
 				handler = jasmine.createSpy("handler");
 
 			storage.add(data, { store: storeName, key: data.id })
@@ -194,8 +192,8 @@ describe("Odin.Storage", function() {
 		it("Should broadcast events when deleting a hash", function(done) {
 			var storage = new Storage(),
 				storeName = "my-store",
-				id1 = uid(),
-				id2 = uid(),
+				id1 = Storage.uid(),
+				id2 = Storage.uid(),
 				data = { id1: { id: id1, foo: "bar"}, id2: { id: id2, foo: "fobar" } },
 				handler = jasmine.createSpy("handler");
 
@@ -213,8 +211,8 @@ describe("Odin.Storage", function() {
 		it("Should not broadcast events when deleting a hash silently", function(done) {
 			var storage = new Storage(),
 				storeName = "my-store",
-				id1 = uid(),
-				id2 = uid(),
+				id1 = Storage.uid(),
+				id2 = Storage.uid(),
 				data = { id1: { id: id1, foo: "bar"}, id2: { id: id2, foo: "fobar" } },
 				handler = jasmine.createSpy("handler");
 
@@ -233,8 +231,8 @@ describe("Odin.Storage", function() {
 		it("Should reset a whole store", function(done) {
 			var storage = new Storage(),
 				storeName = "my-store",
-				id1 = uid(),
-				id2 = uid(),
+				id1 = Storage.uid(),
+				id2 = Storage.uid(),
 				data = { id1: { id: id1, foo: "bar"}, id2: { id: id2, foo: "fobar" } };
 
 			storage.add(data, { store: storeName, reset: true })
@@ -249,8 +247,8 @@ describe("Odin.Storage", function() {
 		it("Should broadcast reset", function() {
 			var storage = new Storage(),
 				storeName = "my-store",
-				id1 = uid(),
-				id2 = uid(),
+				id1 = Storage.uid(),
+				id2 = Storage.uid(),
 				data = { id1: { id: id1, foo: "bar"}, id2: { id: id2, foo: "fobar" } },
 				handler = jasmine.createSpy("handler");
 
@@ -264,8 +262,8 @@ describe("Odin.Storage", function() {
 		it("Should not broadcast a silent reset", function() {
 			var storage = new Storage(),
 				storeName = "my-store",
-				id1 = uid(),
-				id2 = uid(),
+				id1 = Storage.uid(),
+				id2 = Storage.uid(),
 				data = { id1: { id: id1, foo: "bar"}, id2: { id: id2, foo: "fobar" } },
 				handler = jasmine.createSpy("handler");
 

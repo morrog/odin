@@ -17,9 +17,11 @@ module.exports = {
 if(process.browser) {
     window.Odin = module.exports;
 
-    Injector.static("$", $);
+    
     Injector.static("window", window);
-    Injector.static("localStorage", window.localStorage);
+    Injector.static("window.localStorage", window.localStorage);
+    
+    Injector.static("$", $);
 } else {
 	// Require REST service and other node.js schtuff here
 }

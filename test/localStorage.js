@@ -5,7 +5,7 @@ describe("Odin.LocalStorage", function() {
 		Injector = require("../src/injector"),
 		ls = require('node-localstorage').LocalStorage;
 
-	Injector.static("localStorage", new ls('./test/storage'));
+	Injector.static("window.localStorage", new ls('./test/storage'));
 
 	it("Should be defined", function() {
 		expect(Storage).toBeDefined();
@@ -16,7 +16,7 @@ describe("Odin.LocalStorage", function() {
 	});
 
 	it("Should depend on a localStorage implementation", function() {
-		expect(new Storage().localStorage).toBe(Injector.get("localStorage"));
+		expect(new Storage().localStorage).toBe(Injector.get("window.localStorage"));
 	});
 
 });

@@ -13,6 +13,7 @@ var Injector = require("./injector"),
     merge = require("mout/object/merge"),
     values = require("mout/object/values"),
     hasDefine = typeof define === "function" && define.amd,
+    _uid = 1,
 
 
 Base = function() {
@@ -30,7 +31,6 @@ Base = function() {
     this._events = {};
     return this.init.apply(this, arguments);
 };
-console.log("Test");
 
 Base.prototype = {
     constructor: Base,
@@ -224,6 +224,10 @@ Base.defineMe = function() {
     }
 
     return this;
+};
+
+Base.uid = function(prefix) {
+    return (prefix || "") + (_uid++);
 };
 
 module.exports = Base.defineMe();

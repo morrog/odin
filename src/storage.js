@@ -66,13 +66,13 @@ Storage = module.exports = Base.extend({
 			key = null;
 		}
 
-		return this.getStore(name, function(store) {
-			if(key) {
-				return self.getObject(store, key, done);
-			}
+		if(key) {
+			self.getObject(name, key, done);
+		} else {
+			self.getHash(name, done);
+		}
 
-			self.getHash(store, done);
-		});
+		return this;
 	},
 
 	remove: function(name, key, options) {
@@ -164,16 +164,20 @@ Storage = module.exports = Base.extend({
 		}
 	},
 
+	getObject: function(name, key, done) {
+		this.getStore(name, function(store) {
+			done(store[key]);
+		});
+	},
+
+	getHash: function(name, done) {
+		this.getStore(name, function(store) {
+			done(store);
+		});
+	},
+
 	getStore: function(name, done) {
 		done(stores[name] || (stores[name] = {}));
-	},
-
-	getObject: function(store, key, done) {
-		done(store[key]);
-	},
-
-	getHash: function(store, done) {
-		done(store);
 	}
 
 });
