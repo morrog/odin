@@ -90,6 +90,9 @@ Base.prototype = {
     trigger: function(names) {
         var args = slice(arguments, 1);
 
+        names = isArray(names) ? names : names.split(" ");
+        names.push("all");
+
         return this._eachEvent(names, function(e) {
             this._triggerEvent(e, args);
         });

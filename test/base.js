@@ -243,6 +243,20 @@ describe("The Base class", function() {
 
             expect(handler.calls.length).toBe(1);
         });
+
+        it("Should trigger the 'all' event", function() {
+            var base = new Base(),
+                handler = jasmine.createSpy("handler"),
+                foo = "bar";
+
+            base.on("all", handler)
+                .trigger("some-event")
+                .trigger("this-event", foo)
+                .trigger("namespaced:event");
+
+            expect(handler.calls.length).toBe(3);
+            expect(handler).toHaveBeenCalledWith(foo);
+        });
     });
 
     describe("Injecting", function() {
