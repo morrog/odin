@@ -1,6 +1,7 @@
 var Storage = require("./storage"),
 	Injector = require("./injector"),
 	mixIn = require("mout/object/mixIn"),
+	size = require("mout/object/size"),
 	stores = {},
 
 LocalStorage = module.exports = Storage.extend({
@@ -9,9 +10,9 @@ LocalStorage = module.exports = Storage.extend({
 		"localStorage": "window.localStorage"
 	},
 
-	_save: function(store, done) {
-		this.localStorage.setItem(store._name, JSON.stringify(store));
-		stores[store._name] = store;
+	_save: function(name, store, done) {
+		this.localStorage.setItem(name, JSON.stringify(store));
+		stores[name] = store;
 
 		if(done) {
 			done();
@@ -20,21 +21,21 @@ LocalStorage = module.exports = Storage.extend({
 
 	count: function(name, done) {
 		return this.getStore(name, function(store) {
-			done(store.length);
+			done(size(store));
 		});
 	},
 
 	setObject: function(name, key, data, options) {
 		this.getStore(name, function(store) {
 			store[key] = data;
-			this._save(store, options.done);
+			this._save(name, store, options.done);
 		});
 	},
 
 	setHash: function(name, data, options) {
 		this.getStore(name, function(store) {
 			mixIn(store, data);
-			this._save(store, options.done);
+			this._save(name, store, options.done);
 		});
 	},
 
@@ -50,15 +51,14 @@ LocalStorage = module.exports = Storage.extend({
 		this.getStore(name, function(store) {
 			if(store[key]) {
 				delete store[key];
-				this._save(store, options.done);
+				this._save(name, store, options.done);
 			}
 		});
 	},
 
 	removeHash: function(name, options) {
-		this.getStore(name, function(store) {
-			delete stores[name];
-			this._save(store, options.done);
+		this.getStore(name, function() {
+			this._save(name, {}, options.done);
 		});
 	},
 
@@ -82,8 +82,8 @@ LocalStorage = module.exports = Storage.extend({
 		}
 
 		if(!store) {
-			store = { _name: name };
-			stores[name] = {};
+			store = {};
+			stores[name] = store;
 		}
 
 		done.call(this, store);
