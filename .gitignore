@@ -1,3 +1,6 @@
 node_modules
 build
 dist
+.kdev4/
+*.kdev4
+.cover*

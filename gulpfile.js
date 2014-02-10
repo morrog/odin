@@ -3,6 +3,7 @@ var gulp = require("gulp"),
     browserify = require("gulp-browserify"),
     uglify = require("gulp-uglify"),
     jasmine = require("gulp-jasmine"),
+    coverage = require("gulp-coverage"),
     jshint = require("gulp-jshint"),
     gzip = require("gulp-gzip"),
     clean = require("gulp-clean"),
@@ -15,6 +16,7 @@ var gulp = require("gulp"),
     buildFiles = [buildDir + "/*.js"],
     distDir = "dist",
     distFiles = [distDir + "/*.js"],
+    artifactsDir = "artifacts",
     storageDir = "test/storage";
 
 // Pre tasks
@@ -38,7 +40,10 @@ gulp.task("clean-test", function () {
 
 // Test tasks
 gulp.task("test", ["jshint", "clean-test"], function() {
-    return gulp.src(testFiles).pipe(jasmine());
+    return gulp.src(testFiles)
+        .pipe(coverage.instrument({ pattern: [ "src/*" ] }))
+        .pipe(jasmine())
+        .pipe(coverage.report({ outFile: artifactsDir + "/coverage.html" }));
 });
 
 // Build tasks

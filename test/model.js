@@ -55,7 +55,7 @@ describe("The Model", function() {
 
             expect(handler).toHaveBeenCalled();
             expect(handler).toHaveBeenCalledWith("foobar", "bar");
-            expect(handler.calls.length).toBe(2);
+            expect(handler.calls.count()).toBe(2);
         });
 
         it("Should be able to silence the change broadcast", function() {
@@ -182,7 +182,7 @@ describe("The Model", function() {
             model.unset("foo");
 
             expect(handler).toHaveBeenCalledWith("bar");
-            expect(handler.calls.length).toBe(2);
+            expect(handler.calls.count()).toBe(2);
         });
 
         it("Should be able to silence event broadcast when unsetting a property", function() {
@@ -267,7 +267,7 @@ describe("The Model", function() {
         var json = '{"foo":"bar"}',
             model = new Model(JSON.parse(json));
 
-        spyOn(model, "toObject").andCallThrough();
+        spyOn(model, "toObject").and.callThrough();
 
         expect(model.toJSON()).toEqual(json);
         expect(model.toObject).toHaveBeenCalled();

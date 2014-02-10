@@ -18,8 +18,9 @@ describe("The Validator class", function() {
             MyValidator = Validator.extend({ rules: myRules }),
             validator = new MyValidator();
 
-        expect(object.matches(validator.rules, myRules)).toBe(true);
-        expect(object.matches(validator.rules, Validator.prototype.rules)).toBe(true);
+        expect(validator.rules.foo).toBe(myRules.foo);
+        delete validator.rules.foo;
+        expect(validator.rules).toEqual(Validator.prototype.rules);
     });
 
     describe(".run()", function() {
@@ -45,7 +46,7 @@ describe("The Validator class", function() {
 
             validator.run(rules, props);
 
-            expect(handler.calls.length).toBe(3);
+            expect(handler.calls.count()).toBe(3);
             expect(handler).toHaveBeenCalledWith(["required"]);
             expect(handler).toHaveBeenCalledWith(["number"]);
             expect(handler).toHaveBeenCalledWith({ foo: ["required"], bar: ["number"]});

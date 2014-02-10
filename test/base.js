@@ -241,7 +241,7 @@ describe("The Base class", function() {
                 .trigger(eventName)
                 .trigger(eventName);
 
-            expect(handler.calls.length).toBe(1);
+            expect(handler.calls.count()).toBe(1);
         });
 
         it("Should trigger the 'all' event", function() {
@@ -254,7 +254,7 @@ describe("The Base class", function() {
                 .trigger("this-event", foo)
                 .trigger("namespaced:event");
 
-            expect(handler.calls.length).toBe(3);
+            expect(handler.calls.count()).toBe(3);
             expect(handler).toHaveBeenCalledWith(foo);
         });
     });
