@@ -46,7 +46,7 @@
     "gulp-clean": "~0.2.4",
     "gulp-git": "~0.3.0",
     "jasmine-reporters": "~0.2.1",
-    "minijasminenode": "~0.2.7",
+    "minijasminenode": "~0.3.0",
     "node-localstorage": "~0.3.4"
   }
 }

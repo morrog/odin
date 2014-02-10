@@ -241,7 +241,7 @@ describe("The Base class", function() {
                 .trigger(eventName)
                 .trigger(eventName);
 
-            expect(handler.calls.length).toBe(1);
+            expect(handler.calls.count()).toBe(1);
         });
 
         it("Should trigger the 'all' event", function() {
