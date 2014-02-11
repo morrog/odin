@@ -13,7 +13,7 @@
   "author": "Martin Førre <martinforre@gmail.com> (https://github.com/MartinForre)",
   "license": "GPLv3",
   "scripts": {
-    "test": "node_modules/.bin/minijasminenode test/*.js"
+    "test": "gulp test"
   },
   "engines": {
     "node": ">=0.9 <=0.11"
