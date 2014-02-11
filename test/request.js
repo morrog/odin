@@ -1,7 +1,10 @@
 describe("The Odin.Request", function() {
 
 	var Request = require("../src/request.js"),
-		Base = require("../src/base.js");
+		Base = require("../src/base.js"),
+        jasmineAjax = require("btakita-jasmine-ajax");
+
+    
 
 	it("Should be defined", function() {
 		expect(Request).toBeDefined();
