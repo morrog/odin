@@ -4,7 +4,6 @@ var gulp = require("gulp"),
     uglify = require("gulp-uglify"),
     jasmine = require("gulp-jasmine"),
     istanbul = require("gulp-istanbul"),
-    coveralls = require("coveralls"),
     jshint = require("gulp-jshint"),
     gzip = require("gulp-gzip"),
     clean = require("gulp-clean"),
@@ -52,10 +51,6 @@ gulp.task("test", ["jshint", "clean-test"], function() {
             gulp.src(testFiles)
                 .pipe(jasmine())
                 .pipe(istanbul.writeReports());
-
-            fs.readFile("coverage/lcov.info", "utf8", function (err, data) {
-                coveralls.handleInput(data);
-            });
         });
     } else {
         return gulp.src(testFiles).pipe(jasmine());
