@@ -10,6 +10,7 @@ var gulp = require("gulp"),
     clean = require("gulp-clean"),
     git = require("gulp-git"),
     bump = require("gulp-bump"),
+    fs = require("fs");
 
     srcFiles = ["src/*.js"],
     testFiles = ["test/*.js"],
@@ -52,7 +53,9 @@ gulp.task("test", ["jshint", "clean-test"], function() {
                 .pipe(jasmine())
                 .pipe(istanbul.writeReports());
 
-            coveralls.handleInput("coverage/lcov.info");
+            fs.readFile("coverage/lcov.info", "utf8", function (err, data) {
+                coveralls.handleInput(data);
+            });
         });
     } else {
         return gulp.src(testFiles).pipe(jasmine());
