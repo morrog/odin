@@ -1,4 +1,5 @@
-#Odin.js - JavaScript MV* and stuff [![Build Status](https://travis-ci.org/MartinForre/odin.png?branch=master)](https://travis-ci.org/MartinForre/odin)[![Coverage Status](https://coveralls.io/repos/anderslm/odin/badge.png?branch=master)](https://coveralls.io/r/anderslm/odin?branch=master)
+#Odin.js - JavaScript MV* and stuff 
+[![Build Status](https://travis-ci.org/MartinForre/odin.png?branch=master)](https://travis-ci.org/MartinForre/odin) [![Coverage Status](https://coveralls.io/repos/anderslm/odin/badge.png?branch=master)](https://coveralls.io/r/anderslm/odin?branch=master)
 > It's not _that_ cool, but it works awesomeley with [Node.js](http://nodejs.org/)/[Express](http://expressjs.com/) ([example](https://github.com/martinforre/odin/examples/express))
 
 ## Install
