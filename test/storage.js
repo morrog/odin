@@ -2,7 +2,9 @@ describe("Odin.Storage", function() {
 
     var Storage = require("../src/storage"),
         Base = require("../src/base"),
-        size = require("mout/object/size");
+        size = require("mout/object/size"),
+        contains = require("mout/collection/contains"),
+        isObject = require("mout/lang/isObject");
 
     it("Should be defined", function() {
         expect(Storage).toBeDefined();
@@ -55,6 +57,21 @@ describe("Odin.Storage", function() {
                     expect(handler).not.toHaveBeenCalled();
                     done();
                 }});
+        });
+
+        it("Should convert an array of objects to a hash of objects", function(done) {
+            var storage = new Storage(),
+                storeName = "my-store",
+                data = [ { id: Storage.uid(), foo: "bar" }, { id: Storage.uid(), foo: "foobar" }];
+
+            storage.add(data, { store: storeName, reset: true });
+
+            storage.get(storeName, function(result) {
+                expect(isObject(result)).toBe(true);
+                expect(contains(result, data[0])).toBe(true);
+                expect(contains(result, data[1])).toBe(true);
+                done();
+            });
         });
     });
 

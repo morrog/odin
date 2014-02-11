@@ -1,18 +1,19 @@
-var Base = require("./base"),
+    var Base = require("./base"),
     Injector = require("./injector"),
     mixIn = require("mout/object/mixIn"),
     size = require("mout/object/size"),
     isObject = require("mout/lang/isObject"),
+    isArray = require("mout/lang/isArray"),
     stores = {},
 
-wrapDone = function(context, event, data, done, silent) {
+wrapHandler = function(context, event, data, handler, silent) {
     return function() {
         if(!silent) {
             context.trigger(event, data);
         }
 
-        if(done) {
-            done.apply(done, arguments);
+        if(handler) {
+            handler.apply(handler, arguments);
         }
     };
 },
@@ -29,7 +30,7 @@ Storage = module.exports = Base.extend({
         }
 
         options = options || {};
-        options.done = wrapDone(this, "add:" + options.store, data, options.done, options.silent);
+        options.done = wrapHandler(this, "add:" + options.store, data, options.done, options.silent);
 
         if(options.key) {
             this.setObject(options.store, options.key, data, options);
@@ -47,7 +48,7 @@ Storage = module.exports = Base.extend({
             storeName += "." + options.key;
         }
 
-        options.done = wrapDone(this, "update:" + storeName, data, options.done, options.silent);
+        options.done = wrapHandler(this, "update:" + storeName, data, options.done, options.silent);
 
         if(options.key) {
             this.updateObject(options.store, options.key, data, options);
@@ -88,7 +89,7 @@ Storage = module.exports = Base.extend({
             storeName += "." + key;
         }
 
-        options.done = wrapDone(this, "remove:" + storeName, null, options.done, options.silent);
+        options.done = wrapHandler(this, "remove:" + storeName, null, options.done, options.silent);
 
         if(key) {
             this.removeObject(name, key, options);
@@ -101,7 +102,7 @@ Storage = module.exports = Base.extend({
 
     reset: function(name, options) {
         options = options || {};
-        options.done = wrapDone(this, "reset:" + name, null, options.done, options.silent);
+        options.done = wrapHandler(this, "reset:" + name, null, options.done, options.silent);
 
         this.removeHash(name, options);
 
@@ -125,6 +126,10 @@ Storage = module.exports = Base.extend({
     },
 
     setHash: function(name, data, options) {
+        if(!isArray(data)) {
+            data = mixIn({}, data);
+        }
+
         this.getStore(name, function(store) {
             mixIn(store, data);
 
