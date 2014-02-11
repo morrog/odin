@@ -3,3 +3,7 @@ node_js:
   - "0.11"
   - "0.10"
   - "0.9"
+before_script:
+  - npm install -g gulp && rm -rf node_modules/gulp-jasmine/node_modules/minijasminenode
+after_script:
+  - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage

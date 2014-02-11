@@ -3,7 +3,7 @@ var gulp = require("gulp"),
     browserify = require("gulp-browserify"),
     uglify = require("gulp-uglify"),
     jasmine = require("gulp-jasmine"),
-    coverage = require("gulp-coverage"),
+    istanbul = require("gulp-istanbul"),
     jshint = require("gulp-jshint"),
     gzip = require("gulp-gzip"),
     clean = require("gulp-clean"),
@@ -38,12 +38,22 @@ gulp.task("clean-test", function () {
     return gulp.src([storageDir], { read: false }).pipe(clean());
 });
 
+// Coverage task
+gulp.task("cover", function(cb) {
+    gulp.src(srcFiles).pipe(istanbul()).on("end", cb);
+});
+
 // Test tasks
 gulp.task("test", ["jshint", "clean-test"], function() {
-    return gulp.src(testFiles)
-        .pipe(coverage.instrument({ pattern: srcFiles }))
-        .pipe(jasmine())
-        .pipe(coverage.report({ outFile: artifactsDir + "/coverage.html" }));
+    if(process.env.TRAVIS) {
+        return gulp.run("cover", function() {
+            gulp.src(testFiles)
+                .pipe(jasmine())
+                .pipe(istanbul.writeReports());
+        });
+    } else {
+        return gulp.src(testFiles).pipe(jasmine());
+    }
 });
 
 // Build tasks
