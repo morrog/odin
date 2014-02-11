@@ -9,7 +9,6 @@ var gulp = require("gulp"),
     clean = require("gulp-clean"),
     git = require("gulp-git"),
     bump = require("gulp-bump"),
-    fs = require("fs");
 
     srcFiles = ["src/*.js"],
     testFiles = ["test/*.js"],
