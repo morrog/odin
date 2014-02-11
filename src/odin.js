@@ -1,5 +1,5 @@
 var Base = require("./base"),
-	Injector = require("./injector"),
+    Injector = require("./injector"),
     Model = require("./model"),
     Validator = require("./validator"),
     Storage = require("./storage"),
