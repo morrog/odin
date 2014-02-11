@@ -94,5 +94,9 @@ describe("The Odin.Injector", function() {
 
             expect(foo).toHaveBeenCalledWith(args[0], args[1]);
         });
+
+        it("Should return null when asking for missing dependency", function() {
+            expect(Injector.get("notThere", [])).toBe(null);
+        });
     });
 });
