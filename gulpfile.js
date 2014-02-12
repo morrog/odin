@@ -12,10 +12,12 @@ var gulp = require("gulp"),
 
     srcFiles = ["src/*.js"],
     testFiles = ["test/*.js"],
+    exampleFiles = ["examples/*.js"],
     buildDir = "build",
     buildFiles = [buildDir + "/*.js"],
     distDir = "dist",
     distFiles = [distDir + "/*.js"],
+    exampleDistDir = "examples/dist",
     artifactsDir = "artifacts",
     storageDir = "test/storage";
 
@@ -36,6 +38,10 @@ gulp.task("clean-dist", function () {
 
 gulp.task("clean-test", function () {
     return gulp.src([storageDir], { read: false }).pipe(clean());
+});
+
+gulp.task("clean-examples", function () {
+    return gulp.src([exampleDistDir], { read: false }).pipe(clean());
 });
 
 // Coverage task
@@ -73,6 +79,12 @@ gulp.task("compress", ["dist"], function() {
     return gulp.src(distFiles)
         .pipe(gzip())
         .pipe(gulp.dest(distDir));
+});
+
+gulp.task("examples", ["clean-examples"], function() {
+    return gulp.src(exampleFiles)
+        .pipe(browserify())
+        .pipe(gulp.dest(exampleDistDir));
 });
 
 // Util tasks

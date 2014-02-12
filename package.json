@@ -30,8 +30,7 @@
   ],
   "dependencies": {
     "mout": "*",
-    "zepto": "*",
-    "underscore": "~1.6.0"
+    "zepto": "*"
   },
   "devDependencies": {
     "gulp": "3.5.0",
