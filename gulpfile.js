@@ -59,7 +59,6 @@ gulp.task("test", ["jshint", "clean-test"], function() {
 // Build tasks
 gulp.task("build", ["test", "clean-build"], function() {
     return gulp.src(srcFiles)
-        .pipe(browserify())
         .pipe(gulp.dest(buildDir));
 });
 

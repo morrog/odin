@@ -1,10 +1,7 @@
 describe("The Odin.Request", function() {
 
 	var Request = require("../src/request.js"),
-		Base = require("../src/base.js"),
-        jasmineAjax = require("btakita-jasmine-ajax");
-
-    
+		Base = require("../src/base.js");
 
 	it("Should be defined", function() {
 		expect(Request).toBeDefined();
@@ -13,5 +10,6 @@ describe("The Odin.Request", function() {
 	it("Should inherit from Odin.Base", function() {
 		expect(new Request() instanceof Base).toBe(true);
 	});
+
 
 });
