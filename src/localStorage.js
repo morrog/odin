@@ -64,7 +64,8 @@ LocalStorage = module.exports = Storage.extend({
 
     getObject: function(name, key, done) {
         this.getStore(name, function(store) {
-            done(store[key]);
+            var val = store[key];
+            done(typeof val === "string" ? JSON.parse(val) : val);
         });
     },
 
@@ -75,16 +76,19 @@ LocalStorage = module.exports = Storage.extend({
     },
 
     getStore: function(name, done) {
-        var store = stores[name];
+        var store = stores[name],
+            val = null;
 
         if(!store) {
-            this.localStorage.getItem(name);
+            val = this.localStorage.getItem(name);
+            store = typeof val === "string" ? JSON.parse(val) : val;
         }
 
         if(!store) {
             store = {};
-            stores[name] = store;
         }
+
+        stores[name] = store;
 
         done.call(this, store);
     }

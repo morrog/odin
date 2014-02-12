@@ -21,7 +21,7 @@ describe("Odin.LocalStorage", function() {
     });
 
     describe("Storing", function() {
-        it("Shoud store single objects", function() {
+        it("Should store single objects", function() {
             var storage = new Storage(),
                 storeName = "my-store",
                 data = { id: Storage.uid(), foo: "bar" };

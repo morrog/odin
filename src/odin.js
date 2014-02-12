@@ -18,6 +18,8 @@ module.exports = {
         Base.defineMe.call(module.exports);
 
         if(isBrowser) {
+            var $ = require("jquery");
+
             window.Odin = module.exports;
 
             Injector.static("window", window);

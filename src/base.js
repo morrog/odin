@@ -194,7 +194,7 @@ Base.prototype = {
 
     _resolveDependencies: function(dependencies) {
         dependencies = merge(this.inject, dependencies);
-        
+
         forOwn(dependencies, function(dependency, key) {
             this[key] = Injector.get(dependency, this);
         }, this);
