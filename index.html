@@ -27,7 +27,7 @@
             init: function() {
                 var self = this;
 
-                this.storage.get("todo", "item", function(todo) {console.log(todo);
+                this.storage.get("todo", "item", function(todo) {
                     self.todo = new TodoModel(todo);
 
                     document.querySelector("#todo").value = self.todo.what;
