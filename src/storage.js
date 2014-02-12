@@ -25,11 +25,12 @@ Storage = module.exports = Base.extend({
     },
 
     add: function(data, options) {
+        options = options || {};
+
         if(options.reset) {
             this.reset(options.store, { silent: true });
         }
 
-        options = options || {};
         options.done = wrapHandler(this, "add:" + options.store, data, options.done, options.silent);
 
         if(options.key) {
