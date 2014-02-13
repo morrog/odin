@@ -49,6 +49,8 @@
     "node-localstorage": "~0.3.4",
     "minijasminenode": "~0.3.0",
     "coveralls": "~2.7.1",
-    "gulp-istanbul": "~0.1.0"
+    "gulp-istanbul": "~0.1.0",
+    "jquery": "~2.1.0",
+    "jsdom": "~0.10.1"
   }
 }
