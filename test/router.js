@@ -57,15 +57,14 @@ describe("Odin.Router", function() {
 
     it("Should store previous urls in a history array", function(done) {
         var router = new Router(),
-            routes = ["/foo", "/bar", "/404"],
-            i = 0;
+            routes = ["/foo", "/bar", "/404"];
 
         router.once("change", function() {
             router.once("change", function() {
-                expect(router.history).toContain(routes[0]);
                 router.once("change", function() {
-                    expect(router.history).toContain(routes[1]);
                     router.once("change", function() {
+                        expect(router.history).toContain(routes[0]);
+                        expect(router.history).toContain(routes[1]);
                         expect(router.history).toContain(routes[2]);
                         done();
                     });
@@ -80,6 +79,43 @@ describe("Odin.Router", function() {
         });
 
         window.location.hash = routes[0];
+    });
+
+    it("Should go back in history", function(done) {
+        var router = new Router(),
+            routes = ["/foo", "/bar"];
+
+        router.once("change", function() {
+            router.once("change", function() {
+                router.once("change", function() {
+                    expect(Router.parseHash(window.location.hash)).toBe(routes[0]);
+                    done();
+                });
+
+                router.back();
+            });
+
+            window.location.hash = routes[1];
+        });
+
+        window.location.hash = routes[0];
+    });
+
+    it("Should resolve a base controller from the route", function(done) {
+        var router = new Router(),
+            root = "/foo",
+            route = root + "/bar/1",
+            FooController = Base.extend({ resolve: jasmine.createSpy("FooController.resolve") });
+
+        Injector.static(root, FooController);
+
+        router.once("change", function() {
+            expect(router.baseController instanceof FooController).toBe(true);
+            expect(FooController.prototype.resolve).toHaveBeenCalledWith(router.segments);
+            done();
+        });
+
+        window.location.hash = route;
     });
 
 });

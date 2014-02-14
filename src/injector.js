@@ -70,6 +70,7 @@ module.exports = {
 
     get: function(name, target) {
         var dependency = this.dependencies[name];
+
         if(!dependency) {
             return null;
         }
