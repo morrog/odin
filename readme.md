@@ -1,6 +1,6 @@
 #Odin.js - JavaScript MV* and stuff 
 [![Build Status](https://travis-ci.org/MartinForre/odin.png?branch=master)](https://travis-ci.org/MartinForre/odin) [![Coverage Status](https://coveralls.io/repos/MartinForre/odin/badge.png?branch=master)](https://coveralls.io/r/MartinForre/odin?branch=master)
-> It's not _that_ cool, but it works awesomeley with [Node.js](http://nodejs.org/)/[Express](http://expressjs.com/) ([example](https://github.com/martinforre/odin/examples/express))
+> It's not _that_ cool, but it works awesomeley with [Node.js](http://nodejs.org/)/[Express](http://expressjs.com/) ([example](https://github.com/MartinForre/odin/tree/master/examples))
 
 ## Install
 
@@ -17,7 +17,7 @@ bower install odin
 ```
 
 ## Examples
-Check out all the [examples](https://github.com/martinforre/odin/examples)
+Check out all the [examples](https://github.com/MartinForre/odin/tree/master/examples)
 
 ## Documentation
 Head on over to the [docs](http://martinforre.github.io/odin/docs)
