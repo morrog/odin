@@ -5,7 +5,7 @@ var Base = require("./base"),
     Storage = require("./storage"),
     LocalStorage = require("./localStorage"),
     Router = require("./router"),
-    Controller = require("./Controller"),
+    Controller = require("./controller"),
     defined = false;
 
 module.exports = {

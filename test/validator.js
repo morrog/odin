@@ -34,6 +34,14 @@ describe("The Validator class", function() {
             expect(validator.run(rules, valid)).toBe(true);
         });
 
+        it("Should ignore undefined rules", function() {
+            var rules = { foo : { undefinedRule: true } },
+                data = { foo: "bar" },
+                validator = new Validator();
+
+            expect(validator.run(rules, data)).toBe(true);
+        });
+
         it("Should broadcast events for invalid properties", function() {
             var rules = { foo: { required: true }, bar: { number: true } },
                 props = { foo: "", bar: "not a number" },
