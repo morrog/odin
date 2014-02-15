@@ -9,6 +9,21 @@ describe("The Base class", function() {
         expect(Base).toBeDefined();
     });
 
+    it("Should expose it self to AMD module loaders like RequireJS", function() {
+        var hasDefine = Base.hasDefine,
+            define = global.define;
+
+        global.define = jasmine.createSpy("define");
+        Base.hasDefine = true;
+
+        Base.defineMe();
+
+        expect(global.define).toHaveBeenCalledWith([], Base);
+        
+        global.define = define;
+        Base.hasDefine = hasDefine;
+    });
+
     it("Should call the init method upon creation", function() {
         spyOn(Base.prototype, "init");
 
@@ -294,6 +309,16 @@ describe("The Base class", function() {
 
             expect(handler.calls.count()).toBe(3);
             expect(handler).toHaveBeenCalledWith(foo);
+        });
+
+        it("Should not trigger events that don't match", function() {
+            var base = new Base(),
+                handler = jasmine.createSpy("handler");
+
+            base.on("foo", handler)
+                .trigger("bar");
+
+            expect(handler).not.toHaveBeenCalled();
         });
     });
 

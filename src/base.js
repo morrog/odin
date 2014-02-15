@@ -12,7 +12,6 @@ var Injector = require("./injector"),
     hasOwn = require("mout/object/hasOwn"),
     merge = require("mout/object/merge"),
     values = require("mout/object/values"),
-    hasDefine = typeof define === "function" && define.amd,
     _uid = 1,
 
 
@@ -221,8 +220,9 @@ Base.extend = function(proto, static) {
     return derived;
 };
 
+Base.hasDefine = typeof define === "function" && define.amd;
 Base.defineMe = function() {
-    if(hasDefine) {
+    if(this.hasDefine) {
         define([], this);
     }
 
