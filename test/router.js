@@ -81,6 +81,18 @@ describe("Odin.Router", function() {
         window.location.hash = routes[0];
     });
 
+    it("Should go to an url", function(done) {
+        var router = new Router(),
+            url = "/foo";
+
+        router.once("change", function() {
+            expect(Router.parseHash(window.location.hash)).toBe(url);
+            done();
+        });
+
+        router.goto(url);
+    });
+
     it("Should go back in history", function(done) {
         var router = new Router(),
             routes = ["/foo", "/bar"];

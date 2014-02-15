@@ -39,6 +39,23 @@ describe("The Odin.Controller", function() {
             window.location.hash = "/bar/bar";
         });
 
+        it("Should call index if an action is not provided in the url", function(done) {
+            var indexHandler = jasmine.createSpy("/index"),
+                FooController = Controller.extend({
+                    "/index": indexHandler
+                }),
+                router = new Router();
+
+            Injector.static("/foo", FooController);
+
+            router.once("change", function(){
+                expect(indexHandler).toHaveBeenCalled();
+                done();
+            });
+
+            window.location.hash = "/foo";
+        });
+
         it("Should resolve a simple route with an argument", function(done) {
             var barHandler = jasmine.createSpy("/bar"),
                 FooController = Controller.extend({
@@ -89,7 +106,7 @@ describe("The Odin.Controller", function() {
                 done();
             });
 
-            window.location.hash = "/bar/bar/foo";            
+            window.location.hash = "/bar/bar/foo";
         });
 
         it("Should resolve a nested controller with arguments", function(done) {

@@ -5,6 +5,7 @@ var Base = require("./base"),
     Storage = require("./storage"),
     LocalStorage = require("./localStorage"),
     Router = require("./Router"),
+    Controller = require("./Controller"),
     defined = false;
 
 module.exports = {
@@ -36,7 +37,8 @@ module.exports = {
     Validator: Validator,
     Storage: Storage,
     LocalStorage: LocalStorage,
-    Router: Router
+    Router: Router,
+    Controller: Controller
 };
 
 module.exports.defineMe(process.browser !== undefined);

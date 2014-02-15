@@ -7,44 +7,71 @@ Controller = module.exports = Base.extend({
 
     router: null,
     baseController: null,
+    ignore: false,
 
     constructor: function(router, baseController) {
+        var initResult;
+
         this.router = router;
         this.baseController = baseController || null;
-        // Bind events
-        return Base.call(this);
+
+        initResult =  Base.call(this);
+
+        if(!initResult) {
+            this.ignore = true;
+        } else if(typeof initResult === "string" && initResult.indexOf("/") === 0) {
+            this.ignore = true;
+            this.router.goto(initResult);
+        }
+
+        if(!this.ignore) {
+            return;
+        }
+
+        // Bind events here
+
+        return this;
     },
 
     resolve: function(segments) {
-        var routes = this._getRoutes(segments.slice()),
-            i = 0, len = routes.length;
+        var routes,
+            i = 0, len;
         
-        this.segments = segments.slice();
-        this.segments.shift();
+        if(this.ignore) {
+            return;
+        }
 
+        this.segments = segments;
 
-        for(; i < len; i++) {
+        /// If the only segment is the controller segment, then we need to call index
+        if(this.segments.length === 1) {
+            routes = this["/index"] ? ["/index"] : [];
+        } else {
+            routes = this._getRoutes();
+        }
+
+        for(len = routes.length; i < len; i++) {
             this._callRoute(routes[i]);
         }
     },
 
-    _getRoutes: function(segments) {
-        // Remove the first segment (that's the controller segment)
-        segments.shift();
-
+    _getRoutes: function() {
         return filter(functions(this), function(route) {
             var match = route.indexOf("/") === 0,
-                segs = segments.slice(),
+                segments = this.segments.slice(),
                 url = "";
+
+            // Remove the first segment (the controller)
+            segments.shift();
 
             if(!match) {
                 return false;
             }
+            
+            while(segments.length) {
+                url += "/" + segments.shift();
 
-            while(segs.length) {
-                url += "/" + segs.shift();
-
-                if(route.indexOf(url) === 0 && this[route].prototype instanceof Controller) {
+                if(route === url && this[route].prototype instanceof Controller) {
                     return true;
                 } else if(route.indexOf(url) !== 0 && route.indexOf(":") === -1) {
                     match = false;
@@ -61,7 +88,7 @@ Controller = module.exports = Base.extend({
     },
 
     _callRoute: function(route) {
-        var args = this._getArgsFor(route),
+        var args = this._getArgs(route),
             controller, segments;
 
         if(!(this[route].prototype instanceof Controller)) {
@@ -74,12 +101,13 @@ Controller = module.exports = Base.extend({
         controller = new this[route](this.router, this);
 
         // Remove the sub controller segment
-        segments = this.router.segments.slice();
+        segments = this.segments.slice();
         segments.shift();
+        
         controller.resolve(segments);
     },
 
-    _getArgsFor: function(route) {
+    _getArgs: function(route) {
         var segments = route.split("/"),
             args = [],
             i = 0, len;
@@ -88,7 +116,7 @@ Controller = module.exports = Base.extend({
 
         for(len = segments.length; i < len; i++) {
             if(segments[i].indexOf(":") === 0) {
-                args.push(this.segments[i]);
+                args.push(this.segments[i + 1]);
             }
         }
 

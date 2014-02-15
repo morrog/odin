@@ -48,7 +48,7 @@ Router = module.exports = Base.extend({
             this.baseController = new BaseController(this);
         }
 
-        this.baseController.resolve(this.segments);
+        this.baseController.resolve(this.segments.slice());
     },
 
     back: function() {
@@ -58,6 +58,11 @@ Router = module.exports = Base.extend({
             this.window.location.hash = this.history[this.history.length - 1];
         }
 
+        return this;
+    },
+
+    goto: function(url) {
+        this.window.location.hash = url;
         return this;
     },
 
