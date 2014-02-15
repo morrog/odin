@@ -4,7 +4,7 @@ var Base = require("./base"),
     Validator = require("./validator"),
     Storage = require("./storage"),
     LocalStorage = require("./localStorage"),
-    Router = require("./Router"),
+    Router = require("./router"),
     Controller = require("./Controller"),
     defined = false;
 
