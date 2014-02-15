@@ -145,10 +145,6 @@ Base.prototype = {
 
             events = filter(stack, ev);
 
-            if(!events || !events.length) {
-                continue;
-            }
-
             for(j = 0; j < events.length; j++) {
                 if(events[j].namespace && events[j].namespace !== ev.namespace) {
                     continue;
