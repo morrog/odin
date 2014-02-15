@@ -127,5 +127,67 @@ describe("The Odin.Controller", function() {
 
             window.location.hash = "/bar/bar/foo/1/5";            
         });
+
+        it("Should ignore a controller if false is returned from the .init() method", function(done) {
+            var barHandler = jasmine.createSpy("/bar"),
+                FooController = Controller.extend({
+                    init: function() {
+                        return false;
+                    },
+                    "/bar": barHandler
+                }),
+                router = new Router();
+
+            Injector.static("/bar", FooController);
+
+            router.once("change", function() {
+                expect(barHandler).not.toHaveBeenCalled();
+                done();
+            });
+            
+            window.location.hash = "/bar/bar";
+        });
+
+        it("Should redirect if an url is returned from the .init() method", function(done) {
+            var barHandler = jasmine.createSpy("/bar"),
+                redirectTo = "/foo",
+                FooController = Controller.extend({
+                    init: function() {
+                        return redirectTo;
+                    },
+                    "/bar": barHandler
+                }),
+                router = new Router();
+
+            Injector.static("/bar-redirect", FooController);
+
+            router.once("change", function() {
+                router.once("change", function() {
+                    expect(Router.parseHash(window.location.hash)).toBe(redirectTo);
+                    done();
+                });
+
+                expect(barHandler).not.toHaveBeenCalled();
+            });
+            
+            window.location.hash = "/bar-redirect/bar";
+        });
+
+        it("Should not match deeper than the segments", function(done) {
+            var barHandler = jasmine.createSpy("/bar"),
+                FooController = Controller.extend({
+                    "/bar/foobar": barHandler
+                }),
+                router = new Router();
+
+            Injector.static("/bar", FooController);
+
+            router.once("change", function() {
+                expect(barHandler).not.toHaveBeenCalled();
+                done();
+            });
+            
+            window.location.hash = "/bar/bar";
+        });
     });
 });
