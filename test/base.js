@@ -315,8 +315,8 @@ describe("The Base class", function() {
             var base = new Base(),
                 handler = jasmine.createSpy("handler");
 
-            base.on("foo", handler)
-                .trigger("bar");
+            base.on("foo:bar", handler)
+                .trigger("foo");
 
             expect(handler).not.toHaveBeenCalled();
         });

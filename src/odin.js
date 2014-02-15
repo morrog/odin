@@ -11,7 +11,7 @@ var Base = require("./base"),
 module.exports = {
     defineMe: function(isBrowser) {
         if(defined && !process.env.TEST) {
-            return;
+            return false;
         }
 
         defined = true;

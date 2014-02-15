@@ -32,4 +32,9 @@ describe("Odin", function() {
 
         expect(window.Odin).toBeDefined();
     });
+
+    it("Should not allow defining it self multiple times", function() {
+        process.env.TEST = "";
+        expect(Odin.defineMe()).toBe(false);
+    });
 });
