@@ -1,9 +1,9 @@
 "use strict";
 
 var ctorApply = require("mout/lang/ctorApply"),
-    clone = require("mout/lang/clone");
+    clone = require("mout/lang/clone"),
 
-module.exports = {
+Injector = {
 
     dependencies: {},
     root: "./",
@@ -93,6 +93,12 @@ module.exports = {
 
 };
 
-if(typeof define === "function" && define.amd) {
-    define([], module.exports);
-}
+Injector.defineMe = function() {
+    if(typeof define === "function" && define.amd) {
+        define([], this);
+    }
+
+    return this;
+};
+
+module.exports = Injector.defineMe();

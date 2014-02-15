@@ -7,6 +7,19 @@ describe("The Odin.Injector", function() {
         expect(Injector).toBeDefined();
     });
 
+    it("Should expose it self to AMD module loaders like RequireJS", function() {
+        var define = global.define;
+
+        global.define = jasmine.createSpy("define");
+        global.define.amd = true;
+
+        Injector.defineMe();
+
+        expect(global.define).toHaveBeenCalledWith([], Injector);
+        
+        global.define = define;
+    });
+
     describe("Setting", function() {
         it("Should set dependencies", function() {
             var foo = function() { };
