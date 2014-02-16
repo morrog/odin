@@ -41,6 +41,26 @@ describe("The Odin.Controller", function() {
             window.location.hash = "/bar/bar";
         });
 
+        it("Should resulve a multi-segmented route", function(done) {
+            var foobarHandler = jasmine.createSpy("foobar"),
+                foobazHandler = jasmine.createSpy("foobaz"),
+                FooController = Controller.extend({
+                    "/foo/bar": foobarHandler,
+                    "/foo/baz": foobazHandler
+                }),
+                router = new Router();
+
+            Injector.static("/foo", FooController);
+
+            router.once("change", function() {
+                expect(foobarHandler).toHaveBeenCalled();
+                expect(foobazHandler).not.toHaveBeenCalled();
+                done();
+            });
+
+            window.location.hash = "/foo/foo/bar";
+        });
+
         it("Should call index if an action is not provided in the url", function(done) {
             var indexHandler = jasmine.createSpy("/index"),
                 FooController = Controller.extend({
@@ -191,6 +211,30 @@ describe("The Odin.Controller", function() {
             
             window.location.hash = "/bar/bar";
         });
+
+        it("Should ignore all routes if false is returned from the constructor", function(done) {
+            var indexHandler = jasmine.createSpy("/index"),
+                FooController = Controller.extend({
+                    init: function() {
+                        return false;
+                    },
+                    "/index": indexHandler
+                }),
+                router = new Router();
+
+            Injector.static("/foo", FooController);
+
+            router.once("change", function() {
+                router.once("change", function() {
+                    expect(indexHandler).not.toHaveBeenCalled();
+                    done();
+                });
+
+                window.location.hash = "/foo/index";
+            });
+
+            window.location.hash = "/foo";
+        });
     });
 
     describe("Rendering", function(){
@@ -198,7 +242,7 @@ describe("The Odin.Controller", function() {
             win = null;
 
         beforeEach(function() {
-            var doc = jsdom("<html><head></head><body><div odin-controller='/foo'>hello world</div></body></html>");
+            var doc = jsdom("<html><head></head><body><div odin-controller='/foo'>hello <div odin-route='/bar'>world</bar></div></body></html>");
             win = doc.parentWindow;
             win.location.hash = "";
 
@@ -207,7 +251,7 @@ describe("The Odin.Controller", function() {
             Injector.static("window", win);
         });
 
-        it("Should set the el property", function(done) {
+        it("Should set the el property for a controller", function(done) {
             var el = [],
                 FooController = Controller.extend({
                     init: function() {
@@ -224,6 +268,25 @@ describe("The Odin.Controller", function() {
             });
 
             win.location.hash = "/foo";
+        });
+
+        it("should set the el property for a route", function(done) {
+            var el = [],
+                FooController = Controller.extend({
+                    "/bar": function() {
+                        el = this.el;
+                    }
+                }),
+                router = new Router();
+
+            Injector.static("/foo", FooController);
+
+            router.once("change", function(url) {
+                expect(el[0]).toEqual($("[odin-route='/bar']")[0]);
+                done();
+            });
+
+            win.location.hash = "/foo/bar";
         });
     });
 });
