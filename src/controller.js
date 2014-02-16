@@ -27,7 +27,6 @@ Controller = module.exports = Base.extend({
             this.ignore = true;
             return;
         }
-        
 
         this._setEl(this.segments[0]);
 

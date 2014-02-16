@@ -193,7 +193,7 @@ describe("The Odin.Controller", function() {
         });
     });
 
-    xdescribe("Rendering", function(){
+    describe("Rendering", function(){
         var $ = null,
             win = null;
 
@@ -203,15 +203,14 @@ describe("The Odin.Controller", function() {
             win.location.hash = "";
 
             $ = jQuery(win);
-
             Injector.static("$", $);
             Injector.static("window", win);
         });
 
         it("Should set the el property", function(done) {
-            var el = null,
+            var el = [],
                 FooController = Controller.extend({
-                    "/index": function() {
+                    init: function() {
                         el = this.el;
                     }
                 }),
@@ -219,12 +218,12 @@ describe("The Odin.Controller", function() {
 
             Injector.static("/foo", FooController);
 
-            router.once("change", function() {
+            router.once("change", function(url) {
                 expect(el[0]).toEqual($("[odin-controller='/foo']")[0]);
                 done();
             });
 
-            win.location.href = "/foo";
+            win.location.hash = "/foo";
         });
     });
 });
