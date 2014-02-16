@@ -6,13 +6,15 @@ describe("The Odin.Controller", function() {
         Injector = require("../src/injector"),
         jsdom = require("jsdom").jsdom,
         document = jsdom("<html><head></head><body>hello world</body></html>"),
-        window = document.parentWindow;
+        window = document.parentWindow,
+        jQuery = require("jquery");
 
     it("Should be defined", function() {
         expect(Controller).toBeDefined();
     });
 
     it("Should inherit from Odin.Base", function() {
+        Injector.static("window", window);
         expect(new Controller() instanceof Base).toBe(true);
     });
 
@@ -188,6 +190,41 @@ describe("The Odin.Controller", function() {
             });
             
             window.location.hash = "/bar/bar";
+        });
+    });
+
+    xdescribe("Rendering", function(){
+        var $ = null,
+            win = null;
+
+        beforeEach(function() {
+            var doc = jsdom("<html><head></head><body><div odin-controller='/foo'>hello world</div></body></html>");
+            win = doc.parentWindow;
+            win.location.hash = "";
+
+            $ = jQuery(win);
+
+            Injector.static("$", $);
+            Injector.static("window", win);
+        });
+
+        it("Should set the el property", function(done) {
+            var el = null,
+                FooController = Controller.extend({
+                    "/index": function() {
+                        el = this.el;
+                    }
+                }),
+                router = new Router();
+
+            Injector.static("/foo", FooController);
+
+            router.once("change", function() {
+                expect(el[0]).toEqual($("[odin-controller='/foo']")[0]);
+                done();
+            });
+
+            win.location.href = "/foo";
         });
     });
 });

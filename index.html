@@ -5,7 +5,37 @@
     <title> Odin.js testing </title>
 </head>
 <body>
+    <div odin-controller="/foo" style="display:none;">
+        <div odin-controller="/bar" style="display:none;">
+            This is the bar index
+
+            <div odin-route="/foobar" style="display:none;">
+                This is the foobar
+            </div>
+        </div>
+    </div>
+
     <script src="node_modules/zepto/zepto.min.js"></script>
     <script src="build/odin.js"></script>
+    <script>
+        var FooController = Odin.Controller.extend({
+                init: function() {
+                    this.el.show();
+                },
+
+                "/bar": Odin.Controller.extend({
+                    "/index": function() {
+                        this.el.show();
+                    },
+                    "/foobar": function() {
+                        this.el.show();
+                    }
+                })
+            });
+
+        Odin.Injector.static("/foo", FooController);
+
+        new Odin.Router();
+    </script>
 </body>
 </html>

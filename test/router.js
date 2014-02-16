@@ -2,6 +2,7 @@ describe("Odin.Router", function() {
 
     var Router = require("../src/router"),
         Base = require("../src/base"),
+        Controller = require("../src/controller"),
         Injector = require("../src/injector"),
         forEach = require("mout/array/forEach"),
         jsdom = require("jsdom").jsdom,
@@ -11,6 +12,7 @@ describe("Odin.Router", function() {
     beforeEach(function() {
         window.location.hash = "";
         Injector.static("window", window);
+        Injector.static("$", null);
     });
 
     it("Should be defined", function() {
@@ -117,7 +119,7 @@ describe("Odin.Router", function() {
         var router = new Router(),
             root = "/foo",
             route = root + "/bar/1",
-            FooController = Base.extend({ resolve: jasmine.createSpy("FooController.resolve") });
+            FooController = Controller.extend({ resolve: jasmine.createSpy("FooController.resolve") });
 
         Injector.static(root, FooController);
 

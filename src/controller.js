@@ -6,31 +6,46 @@ var Base = require("./base"),
 Controller = module.exports = Base.extend({
 
     router: null,
-    baseController: null,
+    parent: null,
     ignore: false,
+    el: null,
 
-    constructor: function(router, baseController) {
+    inject: {
+        $: "$"
+    },
+
+    constructor: function(router, segments, parent) {
         var initResult;
 
         this.router = router;
-        this.baseController = baseController || null;
+        this.segments = segments || [];
+        this.parent = parent || null;
 
-        initResult =  Base.call(this);
+        this._resolveDependencies();
 
-        if(!initResult) {
+        if(!this.router) {
+            this.ignore = true;
+            return;
+        }
+        
+
+        this._setEl(this.segments[0]);
+
+        initResult = Base.call(this, router, parent);
+        if(initResult === false) {
             this.ignore = true;
         } else if(typeof initResult === "string" && initResult.indexOf("/") === 0) {
             this.ignore = true;
             this.router.goto(initResult);
         }
 
-        if(!this.ignore) {
+        if(this.ignore) {
             return;
         }
 
         // Bind events here
 
-        return this;
+        this.resolve(segments);
     },
 
     resolve: function(segments) {
@@ -41,7 +56,7 @@ Controller = module.exports = Base.extend({
             return;
         }
 
-        this.segments = segments;
+        this.segments = segments || [];
 
         /// If the only segment is the controller segment, then we need to call index
         if(this.segments.length === 1) {
@@ -92,19 +107,19 @@ Controller = module.exports = Base.extend({
             controller, segments;
 
         if(!(this[route].prototype instanceof Controller)) {
+            this._setEl(route.slice(1));
+
             return this._triggerEvent({
                 handler: this[route],
                 context: this
             }, args);
         }
         
-        controller = new this[route](this.router, this);
-
         // Remove the sub controller segment
         segments = this.segments.slice();
         segments.shift();
-        
-        controller.resolve(segments);
+
+        controller = new this[route](this.router, segments, this);
     },
 
     _getArgs: function(route) {
@@ -121,6 +136,26 @@ Controller = module.exports = Base.extend({
         }
 
         return args;
+    },
+
+    _setEl: function(name) {
+        var el, context;
+        name = "/" + (name || "");
+        
+        if(!this.$) {
+            return;
+        }
+        
+        if(this.el && this.el.is("[odin-controller]")) {
+            el = this.el.find("[odin-route='" + name + "']");
+        } else {
+            context = this.parent && this.parent.el ? this.parent.el : false;
+            el = this.$("[odin-controller='" + name + "']");
+        }
+
+        if(el.length) {
+            this.el = el;
+        }
     }
 
 });

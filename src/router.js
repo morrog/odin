@@ -5,6 +5,7 @@ var Base = require("./base"),
 Router = module.exports = Base.extend({
 
     url: "/",
+    segments: [],
     history: [],
     baseController: null,
 
@@ -45,10 +46,10 @@ Router = module.exports = Base.extend({
         }
 
         if(!(this.baseController instanceof BaseController)) {
-            this.baseController = new BaseController(this);
+            this.baseController = new BaseController(this, this.segments.slice());
+        } else {
+            this.baseController.resolve(this.segments.slice());
         }
-
-        this.baseController.resolve(this.segments.slice());
     },
 
     back: function() {
