@@ -274,7 +274,7 @@ describe("The Odin.Controller", function() {
             var el = [],
                 FooController = Controller.extend({
                     "/bar": function() {
-                        el = this.el;
+                        el = this["/bar"].el;
                     }
                 }),
                 router = new Router();
@@ -287,6 +287,48 @@ describe("The Odin.Controller", function() {
             });
 
             win.location.hash = "/foo/bar";
+        });
+
+        it("Should keep the controller el", function(done) {
+            var controllerEl = [],
+                routeEl = [],
+                FooController = Controller.extend({
+                    "/bar": function() {
+                        routeEl = this["/bar"].el;
+                        controllerEl = this.init.el;
+                    }
+                }),
+                router = new Router();
+
+            Injector.static("/foo", FooController);
+
+            router.once("change", function(url) {
+                expect(routeEl[0]).toEqual($("[odin-route='/bar']")[0]);
+                expect(controllerEl[0]).toEqual($("[odin-controller='/foo']")[0]);
+                done();
+            });
+
+            win.location.hash = "/foo/bar";
+        });
+
+        it("Should expose el's from other routes", function(done) {
+            var barEl = [],
+                FooController = Controller.extend({
+                    "/index": function() {
+                        barEl = this["/bar"].el;
+                    },
+                    "/bar": function() {}
+                }),
+                router = new Router();
+
+            Injector.static("/foo", FooController);
+
+            router.once("change", function(url) {
+                expect(barEl[0]).toEqual($("[odin-route='/bar']")[0]);
+                done();
+            });
+
+            win.location.hash = "/foo";
         });
     });
 });

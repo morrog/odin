@@ -5,35 +5,45 @@
     <title> Odin.js testing </title>
 </head>
 <body>
-    <div odin-controller="/foo" style="display:none;">
-        <div odin-controller="/bar" style="display:none;">
-            This is the bar index
+    
+    <a href="#/users">Users</a>
 
-            <div odin-route="/foobar" style="display:none;">
-                This is the foobar
-            </div>
+    <div odin-controller="/users">
+        <table odin-route="/index"></table>
+        <div odin-route="/:id">
+
         </div>
     </div>
 
     <script src="node_modules/zepto/zepto.min.js"></script>
     <script src="build/odin.js"></script>
     <script>
-        var FooController = Odin.Controller.extend({
-                init: function() {
-                    this.el.show();
-                },
+        var UsersController = Odin.Controller.extend({
+            users: [ new Odin.Model({id: 0, name: "Foo" }), new Odin.Model({ id: 1, name: "Bar"}) ],
 
-                "/bar": Odin.Controller.extend({
-                    "/index": function() {
-                        this.el.show();
-                    },
-                    "/foobar": function() {
-                        this.el.show();
-                    }
-                })
-            });
+            init: function() {
+                var i = 0, len = this.users.length;
 
-        Odin.Injector.static("/foo", FooController);
+                this["/index"].el.empty();
+                this["/:id"].el.empty();
+
+                for(; i < len; i++) {
+                    $("<tr />").html("<td><a href='#/users/" + i + "'>" + this.users[i].name + "</a></td>").appendTo(this["/index"].el);
+                }
+
+                return "/users/0";
+            },
+
+            "/index": function() {
+                this["/:id"].el.empty();
+            },
+
+            "/:id": function(id) {
+                this["/:id"].el.html(this.users[id].name);
+            }
+        });
+
+        Odin.Injector.static("/users", UsersController);
 
         new Odin.Router();
     </script>

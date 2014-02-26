@@ -132,4 +132,22 @@ describe("Odin.Router", function() {
         window.location.hash = route;
     });
 
+    it("Should resolve a controller on construction", function(done) {
+        var router, route = "/foo",
+            init = jasmine.createSpy("init"),
+            FooController = Controller.extend({
+                init: init
+            });
+
+        Injector.static(route, FooController);
+
+        window.location.hash = route;
+
+        router = new Router();
+        router.once("resolve", function() {
+            expect(init).toHaveBeenCalled();
+            done();
+        });
+    });
+
 });

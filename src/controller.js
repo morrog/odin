@@ -2,6 +2,7 @@ var Base = require("./base"),
     Injector = require("./injector"),
     functions = require("mout/object/functions"),
     filter = require("mout/collection/filter"),
+    forEach = require("mout/array/foreach"),
 
 Controller = module.exports = Base.extend({
 
@@ -28,13 +29,13 @@ Controller = module.exports = Base.extend({
             return;
         }
 
-        this._setEl(this.segments[0]);
+        this._setEl("/" + this.segments[0]);
+        forEach(this._getAllRoutes(), this._setEl, this);
 
         initResult = Base.call(this, router, parent);
         if(initResult === false) {
             this.ignore = true;
         } else if(typeof initResult === "string" && initResult.indexOf("/") === 0) {
-            this.ignore = true;
             this.router.goto(initResult);
         }
 
@@ -43,7 +44,6 @@ Controller = module.exports = Base.extend({
         }
 
         // Bind events here
-
         this.resolve(segments);
     },
 
@@ -70,18 +70,14 @@ Controller = module.exports = Base.extend({
     },
 
     _getRoutes: function() {
-        return filter(functions(this), function(route) {
-            var match = route.indexOf("/") === 0,
+        return filter(this._getAllRoutes(), function(route) {
+            var match = true,
                 segments = this.segments.slice(),
                 url = "";
 
             // Remove the first segment (the controller)
             segments.shift();
 
-            if(!match) {
-                return false;
-            }
-            
             while(segments.length) {
                 url += "/" + segments.shift();
 
@@ -101,13 +97,17 @@ Controller = module.exports = Base.extend({
         }, this);
     },
 
+    _getAllRoutes: function() {
+        return filter(functions(this), function(route) {
+            return route.indexOf("/") === 0;
+        });
+    },
+
     _callRoute: function(route) {
         var args = this._getArgs(route),
             controller, segments;
 
         if(!(this[route].prototype instanceof Controller)) {
-            this._setEl(route.slice(1));
-
             return this._triggerEvent({
                 handler: this[route],
                 context: this
@@ -139,22 +139,25 @@ Controller = module.exports = Base.extend({
 
     _setEl: function(name) {
         var el, context;
-        name = "/" + (name || "");
         
         if(!this.$) {
             return;
         }
         
         if(this.el && this.el.is("[odin-controller]")) {
-            el = this.el.find("[odin-route='" + name + "']");
+            this.init.el = this.el;
+            this[name].el = this.el.find("[odin-route='" + name + "']");
         } else {
-            context = this.parent && this.parent.el ? this.parent.el : false;
-            el = this.$("[odin-controller='" + name + "']");
+            context = this.parent && this.parent.el ? this.parent.el : undefined;
+            el = this.$("[odin-controller='" + name + "']", context);
         }
 
-        if(el.length) {
+        if(el && el.length) {
             this.el = el;
+            return el;
         }
+
+        return null;
     }
 
 });

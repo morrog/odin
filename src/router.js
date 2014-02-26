@@ -17,18 +17,19 @@ Router = module.exports = Base.extend({
         this.history = [];
         this._resolveDependencies();
         
-        this.url = this.getUrl() || this.url;
+        this.hashchange();
 
         this.window.addEventListener("hashchange", bind(this.hashchange, this));
         Router.super_.apply(this, arguments);
     },
 
     hashchange: function() {
-        var route;
+        var route = this.getRoute();
 
-        this.history.push(this.url);
+        if(route.url !== this.url) {
+            this.history.push(this.url);
+        }
 
-        route = this.getRoute();
         this.url = route.url;
         this.segments = route.segments;
 
@@ -50,6 +51,8 @@ Router = module.exports = Base.extend({
         } else {
             this.baseController.resolve(this.segments.slice());
         }
+
+        this.trigger("resolve", this.baseController);
     },
 
     back: function() {
