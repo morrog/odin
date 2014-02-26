@@ -2,7 +2,8 @@ var Base = require("./base"),
     Injector = require("./injector"),
     functions = require("mout/object/functions"),
     filter = require("mout/collection/filter"),
-    forEach = require("mout/array/foreach"),
+    forEach = require("mout/array/forEach"),
+    isArray = require("mout/lang/isArray"),
 
 Controller = module.exports = Base.extend({
 
@@ -37,6 +38,7 @@ Controller = module.exports = Base.extend({
             this.ignore = true;
         } else if(typeof initResult === "string" && initResult.indexOf("/") === 0) {
             this.router.goto(initResult);
+            return;
         }
 
         if(this.ignore) {
@@ -104,14 +106,10 @@ Controller = module.exports = Base.extend({
     },
 
     _callRoute: function(route) {
-        var args = this._getArgs(route),
-            controller, segments;
+        var controller, segments;
 
         if(!(this[route].prototype instanceof Controller)) {
-            return this._triggerEvent({
-                handler: this[route],
-                context: this
-            }, args);
+            return this._callHandler(this[route], this._getArgs(route));
         }
         
         // Remove the sub controller segment
@@ -119,6 +117,33 @@ Controller = module.exports = Base.extend({
         segments.shift();
 
         controller = new this[route](this.router, segments, this);
+    },
+
+    _callHandler: function(handler, args, context) {
+        context = context || this;
+
+        if(!isArray(args) || !args.length) {
+            return handler.call(context);
+        }
+
+        switch(args.length) {
+            case 0:
+                return handler.call(context);
+
+            case 1:
+                return handler.call(context, args[0]);
+
+            case 2:
+                return handler.call(context, args[0], args[1]);
+
+            case 3:
+                return handler.call(context, args[0], args[1], args[2]);
+
+            case 4:
+                return handler.call(context, args[0], args[1], args[2], args[3]);
+        }
+
+        return handler.apply(context, args);
     },
 
     _getArgs: function(route) {
