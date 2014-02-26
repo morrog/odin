@@ -127,9 +127,6 @@ Controller = module.exports = Base.extend({
         }
 
         switch(args.length) {
-            case 0:
-                return handler.call(context);
-
             case 1:
                 return handler.call(context, args[0]);
 
